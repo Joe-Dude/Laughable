@@ -1,0 +1,2468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Laughable - HTML Gaming Unblocked</title>
+    <meta name="description" content="The ultimate destination for free unblocked games! Play fun HTML games directly in your browser.">
+    
+    <!-- Supabase JS client for stats -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    
+    <style>
+body {
+  font-family: Arial, sans-serif;
+}
+
+/* Black smooth overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* White smooth box with slide animation */
+.overlay-text {
+  background: white;
+  padding: 30px 50px;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  font-size: 18px;
+  text-align: left;
+  color: #0044cc;
+  font-family: "Times New Roman", serif;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+
+  /* Slide-in animation */
+  transform: translateY(-100px);
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+/* Show animation when overlay is active */
+.overlay.show .overlay-text {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Styled buttons */
+button {
+  background-color: #add8e6;
+  color: black;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #92c6d8;
+}
+
+/* Make the scrollbar look nice */
+.overlay-text::-webkit-scrollbar {
+  width: 8px;
+}
+.overlay-text::-webkit-scrollbar-thumb {
+  background: #0044cc;
+  border-radius: 4px;
+}
+
+        /* === BASE STYLES === */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1e27 0%, #181c24 50%, #16191f 100%);
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* === HEADER === */
+        header {
+            background: linear-gradient(135deg, #2a2f3e 0%, #222738 100%);
+            padding: 2.5rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        header h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: clamp(2rem, 4vw, 3rem);
+            color: #72e0d1;
+            text-shadow: 0 0 20px rgba(114, 224, 209, 0.3);
+            font-weight: 700;
+        }
+
+        header p {
+            margin: 0;
+            font-size: 1.1rem;
+            color: #b1b4c4;
+            opacity: 0.9;
+        }
+
+        /* === NAVIGATION === */
+        nav {
+            background: rgba(28, 32, 43, 0.95);
+            text-align: center;
+            padding: 0.5rem 0;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 2px solid rgba(114, 224, 209, 0.1);
+        }
+
+        nav a {
+            display: inline-block;
+            color: #72e0d1;
+            text-decoration: none;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            margin: 0 0.25rem;
+        }
+
+        nav a:hover {
+            background: linear-gradient(45deg, #72e0d1, #5bc5b8);
+            color: #181c24;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(114, 224, 209, 0.3);
+        }
+
+        /* === MAIN CONTENT === */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        section {
+            margin-bottom: 3rem;
+        }
+
+        h2 {
+            color: #72e0d1;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        /* === GAMES MENU === */
+        .games-menu {
+            background: linear-gradient(135deg, #242936 0%, #212736 100%);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            padding: 2.5rem 1.5rem;
+            margin-bottom: 3rem;
+            border: 1px solid rgba(114, 224, 209, 0.1);
+        }
+
+        .games-menu h2 {
+            margin-top: 0;
+            background: linear-gradient(45deg, #72e0d1, #5bc5b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* === TAG FILTERS === */
+        .games-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .games-tags button {
+            background: rgba(24, 28, 36, 0.8);
+            color: #72e0d1;
+            border: 2px solid #72e0d1;
+            border-radius: 25px;
+            padding: 0.6rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .games-tags button:hover,
+        .games-tags button.selected {
+            background: linear-gradient(45deg, #72e0d1, #5bc5b8);
+            color: #181c24;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(114, 224, 209, 0.4);
+        }
+
+        /* === GAMES GRID === */
+/* === UPDATED GAMES GRID - SMALLER VERSION === */
+/* === UPDATED GAMES GRID - SMALLER VERSION === */
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Reduced from 280px */
+    gap: 1.5rem; /* Reduced from 2rem */
+    align-items: stretch;
+}
+
+.game-card {
+    background: linear-gradient(135deg, #242936 0%, #212736 100%);
+    border-radius: 12px; /* Even smaller radius */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    padding: 0.8rem; /* Very compact padding */
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    min-height: 200px; /* Very short cards */
+    border: 1px solid rgba(114, 224, 209, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.game-card img {
+    width: 100px; /* Much smaller images */
+    height: 100px; /* Much smaller images */
+    object-fit: contain;
+    margin: 0 auto 0.6rem; /* Reduced margin */
+    border-radius: 8px; /* Smaller radius */
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.game-card h3 {
+    margin: 0 0 0.5rem; /* Very tight margins */
+    color: #72e0d1;
+    font-size: 1.3rem; /* Smaller title */
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* === SMALLER GAME TAGS === */
+.game-tags {
+    margin-bottom: 0.025rem; /* Very tight */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.05rem; /* Very close together */
+    justify-content: center;
+}
+
+.game-tag {
+    background: linear-gradient(45deg, #181c24, #1a1e27);
+    color: #72e0d1;
+    border: 1px solid rgba(114, 224, 209, 0.3);
+    border-radius: 1px; /* Smaller radius */
+    padding: 0.015rem 0.1rem; /* Very compact */
+    font-size: 0.01rem; /* Tiny font */
+    font-weight: 100;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+}
+
+/* === ULTRA COMPACT GAME STATS === */
+.game-stats {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.05rem; /* Very tight spacing */
+    margin-bottom: 0.1rem; /* Minimal margin */
+    flex-wrap: wrap;
+}
+
+.stat-btn {
+    background: rgba(24, 28, 36, 0.8);
+    color: #72e0d1;
+    border: 0.5px solid rgba(114, 224, 209, 0.3);
+    border-radius: 1px; /* Small radius */
+    padding: 0.05rem 0.15rem; /* Ultra compact */
+    font-size: 0.15rem; /* Very small font */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    min-width: auto;
+}
+
+.stat-count {
+    font-weight: 200;
+    margin-left: 0.15rem; /* Minimal spacing */
+}
+
+.play-count {
+    color: #b1b4c4;
+    font-size: 0.95rem; /* Very small */
+    font-weight: 200;
+}
+
+/* === ULTRA COMPACT GAME DESCRIPTION === */
+.game-card p {
+    color: #b1b4c4;
+    font-size: 0.25rem; /* Very small font */
+    margin: 0 0 0.05rem; /* Minimal margins */
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 0.5; /* Very tight */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1; /* Only 1 lines max */
+    -webkit-box-orient: vertical;
+}
+
+/* === ULTRA COMPACT PLAY BUTTON === */
+.game-card button {
+    background: linear-gradient(45deg, #72e0d1, #5bc5b8);
+    color: #181c24;
+    padding: 0.2rem 0.5rem; /* Much smaller */
+    font-size: 0.4rem; /* Smaller font */
+    border-radius: 5px; /* Smaller radius */
+    border: none;
+    font-weight: 200;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.25px;
+    box-shadow: 0 1px 4px rgba(114, 224, 209, 0.3);
+}
+
+/* === UPDATED RESPONSIVE DESIGN === */
+@media (max-width: 1200px) {
+    .games-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Smaller */
+        gap: 1rem;
+    }
+    
+    .game-card {
+        min-height: 100px; /* Very short */
+    }
+}
+
+@media (max-width: 768px) {
+    .games-grid {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); /* Even smaller */
+        gap: 0.8rem;
+    }
+    
+    .game-card {
+        min-height: 160px; /* Ultra short */
+        padding: 0.6rem;
+    }
+    
+    .game-card img {
+        width: 40px; /* Tiny images */
+        height: 40px;
+    }
+    
+    .stat-btn {
+        padding: 0.005rem 0.05rem; /* Ultra tiny */
+        font-size: 0.6rem;
+    }
+    
+    .game-card h3 {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .games-grid {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* Very small */
+        gap: 0.6rem;
+    }
+    
+    .game-card {
+        min-height: 80px; /* Super compact */
+        padding: 0.1rem;
+    }
+    
+    .game-card img {
+        width: 35px; /* Very small */
+        height: 35px;
+        margin-bottom: 0.2rem;
+    }
+    
+    .game-card h3 {
+        font-size: 1.6rem; /* Tiny title */
+        margin-bottom: 0.4rem;
+    }
+    
+    .game-card p {
+        font-size: 0.1rem; /* Tiny description */
+        -webkit-line-clamp: 1; /* Only 1 line on mobile */
+        margin-bottom: 0.1rem;
+    }
+    
+    .game-stats {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;  /* small space between buttons */
+}
+
+
+    
+    .game-card button {
+        padding: 0.3rem 0.7rem; /* Small play button */
+        font-size: 0.75rem;
+    }
+}
+
+
+
+        /* === GAME TAGS === */
+        .game-tags {
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .game-tag {
+            background: linear-gradient(45deg, #181c24, #1a1e27);
+            color: #72e0d1;
+            border: 1px solid rgba(114, 224, 209, 0.3);
+            border-radius: 15px;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* === GAME STATS === */
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-btn {
+            background: rgba(24, 28, 36, 0.8);
+            color: #72e0d1;
+            border: 0.005px solid rgba(114, 224, 209, 0.3);
+            border-radius: 1px;
+            padding: 0.1rem 0.1rem;
+            font-size: 0.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 0.5;
+        }
+
+
+
+        .stat-btn:hover {
+            background: linear-gradient(45deg, #72e0d1, #5bc5b8);
+            color: #181c24;
+            transform: translateY(-1px);
+        }
+
+        .stat-count {
+            font-weight: 700;
+            margin-left: 0.3rem;
+        }
+
+        .play-count {
+            color: #b1b4c4;
+            font-size: 7rem;
+            font-weight: 900;
+        }
+
+        /* === GAME DESCRIPTION === */
+        .game-card p {
+            color: #b1b4c4;
+            font-size: 1rem;
+            margin: 0 0 1.5rem;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        /* === PLAY BUTTON === */
+        .game-card .game-actions {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-top: auto;
+        }
+
+        .game-card button {
+            background: linear-gradient(45deg, #72e0d1, #5bc5b8);
+            color: #181c24;
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 25px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(114, 224, 209, 0.3);
+        }
+
+        .game-card button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(114, 224, 209, 0.4);
+            background: linear-gradient(45deg, #5bc5b8, #72e0d1);
+        }
+
+        /* === ADD GAME SECTION === */
+        .add-game-section {
+            background: linear-gradient(135deg, #242936 0%, #212736 100%);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin: 3rem 0;
+            border: 1px solid rgba(114, 224, 209, 0.1);
+        }
+
+        .add-game-section h2 {
+            color: #72e0d1;
+            margin-bottom: 1rem;
+        }
+
+        .add-game-section p {
+            color: #b1b4c4;
+            margin-bottom: 1.5rem;
+        }
+
+        .add-game-section textarea {
+            width: 100%;
+            min-height: 150px;
+            margin-bottom: 1.5rem;
+            border: 2px solid rgba(114, 224, 209, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 1rem;
+            background: rgba(24, 28, 36, 0.8);
+            color: #ffffff;
+            resize: vertical;
+            font-family: 'Consolas', 'Monaco', monospace;
+            transition: border-color 0.3s ease;
+        }
+
+        .add-game-section textarea:focus {
+            outline: none;
+            border-color: #72e0d1;
+            box-shadow: 0 0 20px rgba(114, 224, 209, 0.2);
+        }
+
+        .add-game-section button {
+            background: linear-gradient(45deg, #72e0d1, #5bc5b8);
+            color: #181c24;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(114, 224, 209, 0.3);
+        }
+
+        .add-game-section button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(114, 224, 209, 0.4);
+        }
+
+        /* === ABOUT & CONTACT SECTIONS === */
+        #about, #contact {
+            background: rgba(33, 39, 54, 0.6);
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(114, 224, 209, 0.1);
+        }
+
+        #contact a {
+            color: #72e0d1;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        #contact a:hover {
+            color: #5bc5b8;
+            text-decoration: underline;
+        }
+
+        /* === FOOTER === */
+        footer {
+            background: linear-gradient(135deg, #2a2f3e 0%, #222738 100%);
+            color: #b1b4c4;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 4rem;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* === RESPONSIVE DESIGN === */
+        @media (max-width: 1200px) {
+            main {
+                max-width: 95vw;
+            }
+            .games-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .games-grid {
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 1.5rem;
+            }
+            
+            .game-card {
+                min-height: 350px;
+                padding: 1.2rem;
+            }
+            
+            .game-card img {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .game-stats {
+                gap: 0.5rem;
+            }
+            
+            .stat-btn {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.8rem;
+            }
+            
+            nav a {
+                padding: 0.8rem 1.5rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 1.5rem 1rem;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            nav a {
+                padding: 0.6rem 1rem;
+                margin: 0.1rem;
+            }
+            
+            main {
+                padding: 1rem 0.5rem;
+            }
+            
+            .games-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .game-card {
+                min-height: 280px;
+            }
+            
+            .game-card img {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .games-tags {
+                gap: 0.5rem;
+            }
+            
+            .games-tags button {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* === LOADING ANIMATION === */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(114, 224, 209, 0.3);
+            border-radius: 50%;
+            border-top-color: #72e0d1;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* === EMPTY STATE === */
+        .empty-state {
+            color: #72e0d1;
+            text-align: center;
+            width: 100%;
+            padding: 3rem 1rem;
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+/* === SEARCH BAR STYLES - ADD TO YOUR EXISTING <style> SECTION === */
+.search-container {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto 2rem auto;
+    z-index: 200;
+}
+
+.search-input {
+    width: 100%;
+    padding: 1rem 1.5rem 1rem 3.5rem;
+    font-size: 1.1rem;
+    border: 2px solid rgba(114, 224, 209, 0.3);
+    border-radius: 25px;
+    background: rgba(24, 28, 36, 0.9);
+    color: #ffffff;
+    outline: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.search-input:focus {
+    border-color: #72e0d1;
+    box-shadow: 0 0 25px rgba(114, 224, 209, 0.3), 0 4px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-1px);
+}
+
+.search-input::placeholder {
+    color: #b1b4c4;
+    opacity: 0.7;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #72e0d1;
+    font-size: 1.2rem;
+    pointer-events: none;
+}
+
+.clear-search {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #72e0d1;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.clear-search.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.clear-search:hover {
+    background: rgba(114, 224, 209, 0.1);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(36, 41, 54, 0.95);
+    border: 1px solid rgba(114, 224, 209, 0.3);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(15px);
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    margin-top: 0.5rem;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.search-suggestions.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.suggestion-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(114, 224, 209, 0.1);
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover {
+    background: rgba(114, 224, 209, 0.1);
+}
+
+.suggestion-item img {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    margin-right: 1rem;
+    object-fit: contain;
+}
+
+.suggestion-content {
+    flex: 1;
+}
+
+.suggestion-title {
+    color: #72e0d1;
+    font-weight: 600;
+    font-size: 1rem;
+    margin: 0 0 0.25rem 0;
+}
+
+.suggestion-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.suggestion-tag {
+    background: rgba(114, 224, 209, 0.2);
+    color: #72e0d1;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.no-results {
+    padding: 2rem;
+    text-align: center;
+    color: #b1b4c4;
+    font-style: italic;
+}
+
+.search-info {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #b1b4c4;
+    font-size: 1rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.search-info.show {
+    opacity: 1;
+}
+
+.search-term {
+    color: #72e0d1;
+    font-weight: 600;
+}
+
+/* Search responsiveness - extends your existing responsive design */
+@media (max-width: 768px) {
+    .search-input {
+        padding: 0.8rem 1.2rem 0.8rem 3rem;
+        font-size: 1rem;
+    }
+    
+    .search-icon {
+        left: 1rem;
+        font-size: 1.1rem;
+    }
+    
+    .suggestion-item {
+        padding: 0.8rem;
+    }
+    
+    .suggestion-item img {
+        width: 35px;
+        height: 35px;
+        margin-right: 0.8rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .search-container {
+        margin: 0 0 1.5rem 0;
+    }
+    
+    .search-input {
+        padding: 0.7rem 1rem 0.7rem 2.8rem;
+        font-size: 0.95rem;
+    }
+    
+    .search-icon {
+        left: 0.9rem;
+    }
+}
+
+/* Tiny like/dislike buttons for desktop grid */
+.game-stats .stat-btn {
+  font-size: 0.85rem !important;   /* smaller emoji/text */
+  padding: 0.5rem 0.95rem !important;  /* very tight padding */
+  border-radius: 8px;
+  min-width: unset;  /* no forced width */
+}
+
+.game-stats .stat-count {
+  font-size: 0.85rem !important;   /* match number size */
+  margin-left: 0.15rem;
+}
+
+.game-stats .play-count {
+  font-size: 0.6rem !important;   /* slightly bigger for readability */
+}
+.game-stats .play-count {
+  font-size: 1rem !important;
+  color: #b1b4c4;
+}
+/* Smaller tags inside game cards */
+.game-card .game-tag {
+  font-size: 0.55rem !important;   /* shrink text */
+  padding: 0.1rem 0.3rem !important;  /* shrink box */
+  border-radius: 6px;              /* small rounded corners */
+  font-weight: 500;                /* lighter weight */
+}
+
+
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>🎮 Laughable</h1>
+        <p>The ultimate destination for free unblocked games!</p>
+    </header>
+
+    <nav>
+        <a href="#home">🏠 Home</a>
+        <a href="#games-menu">🎯 Games</a>
+        <a href="#extra">😉 Extras</a>
+ <a href="#addgame">💻 Try Using HTML</a>
+ <a href="#news">📓 News</a>
+        <a href="#about">ℹ️ About</a>
+        <a href="#contact">📧 Contact</a>
+    </nav>
+
+    <main>
+        <section id="home">
+            <h2>Welcome to Laughable!</h2>
+            <p>Play fun and free games directly in your browser. No downloads, just pure gaming fun! Our collection features classic arcade games, puzzles, and modern HTML5 experiences that work on any device.</p>
+        </section>
+
+        <section class="games-menu" id="games-menu">
+            <h2>🎮 Games Collection</h2>
+<!-- ADD THIS HTML RIGHT AFTER YOUR <h2>🎮 Games Collection</h2> line -->
+<!-- PLACE IT BEFORE <div class="games-tags" id="games-tags"> -->
+
+<!-- Search Container -->
+<div class="search-container">
+    <div class="search-icon">🔍</div>
+    <input 
+        type="text" 
+        class="search-input" 
+        id="gameSearch"
+        placeholder="Search games by name, tags, or description..."
+        autocomplete="off"
+    >
+    <button class="clear-search" id="clearSearch" title="Clear search">✕</button>
+    
+    <!-- Search Suggestions -->
+    <div class="search-suggestions" id="searchSuggestions">
+        <!-- Suggestions will be populated here -->
+    </div>
+</div>
+
+<!-- Search Info -->
+<div class="search-info" id="searchInfo">
+    <!-- Search results info will appear here -->
+</div>
+            <div class="games-tags" id="games-tags">
+                <div class="loading"></div>
+            </div>
+            <div class="games-grid" id="games-grid">
+                <div class="loading"></div>
+            </div>
+        </section>
+
+<section class="games-menu" id="extra">
+<h2>Extras</h2>
+<p>Over the year since Laughable started, we’ve accumulated lots of special side extras we would love to share with you. Watch Star Wars, make your own game, use python in HTML, and more! All on your computer free and unblocked.</p><br>
+<button onclick="starwarsfour()" type="button">Play Video</button> <p>Watch Star Wars: A New Hope, free and unblocked on Internet Archive.</p><br>
+<button onclick="pythonpyodide()" type="button">Use Pyodide</button> <p>Run python in a browser! Use basic commands and run in a console. Sorry for the many limitations, but if you want to really get into python it’s free to download at Python.org
+</p><br>
+ </section>
+
+        <section class="add-game-section" id="addgame">
+            <h2>🚀 Try Out Your Own Game!</h2>
+            <p>Have your own HTML game? Paste the code below and click "Launch Game" to play it instantly in a new browser tab! Perfect for testing your creations or sharing with friends.</p>
+
+            <textarea 
+                id="game-html-input" 
+                placeholder="Paste your complete HTML game code here...&#10;&#10;Example:&#10;&lt;!DOCTYPE html&gt;&#10;&lt;html&gt;&#10;&lt;head&gt;&lt;title&gt;My Game&lt;/title&gt;&lt;/head&gt;&#10;&lt;body&gt;&#10;  &lt;!-- Your game content here --&gt;&#10;&lt;/body&gt;&#10;&lt;/html&gt;"
+            ></textarea>
+            <button onclick="loadCustomGame()" type="button">🚀 Launch Game</button>
+<button onclick="develop()" type="button">Developer Tools</button> <p>Want to get your game published on Laughable? Use this form to send your game to us!</p>
+        </section>
+
+<section class="games-menu" id="news">
+<h2>News</h2>
+<h3>New Laughable Update</h3>
+<br>
+<p>Over the past year, Laughable went from its blank canvas beginning to a huge gaming site, but it has become so huge, it is extra hard to locate games that have been added, make fixes, and add games because the site is so messy. But not anymore, here are a few things coming with this new site.<br><br>
+<strong>Organization: </strong>Laughable is putting on a more professional look, making it more organized and neat. New sections contain other content, well the games section contains strictly games. No messy fullscreen buttons anymore either, all games open in a resizable application.<br><br>
+<strong>About Blank: </strong>Laughable games now open in a completely fixed about blank tab! No need to worry about FPS modes and FPS mode errors or anything else to do with the old FPS fixes, this site version contains a completely fixed game launcher that can easily handle all your games, not just some of them!<br><br>
+<strong>Q and A: </strong>Our new game report, and bug report systems are a lot more basic and effective than our old ones. Instead of facing the bug report page, all you have to do is submit an email! It’s easy as that, we just remind you not to submit any information you do not want us to know.<br><br>
+<strong>Bonus Content: </strong>In the past Laughable wasn't the only website we focused on, but now it will be thanks to our new Extras section! Want to see some experiments or random code fragments? Head over there and check it out!<br>
+<br><br><br>
+We hope you enjoy this new update, and that you stay ready! More content is on the way!
+ </section>
+
+        <section id="about">
+            <h2>About Laughable</h2>
+            <p>
+Laughable is a community driven unblocked gaming platform. We showcase hundreds of games, from popular and lesser known platforms. Some of our popular games include:<br>-Ragdoll Hit<br>-Escape Road<br>-Minecraft Java 1.8.8<br><br>And more! All brought, free, unblocked, and without download, straight to you!
+            </p>
+        </section>
+
+        <section id="contact">
+            <h2>Contact Us</h2>
+            <p>
+                Have questions, suggestions, or want to submit a game for our collection? 
+                <a href="mailto:EEstleman2030@bcsstudent.org">Send us an email!</a>
+                We'd love to hear from you and grow our gaming community together.<br>
+Please only send emails with information about:<br>
+<br>
+-Bugs<br>
+-New Game Editions<br>
+-Tips<br>
+-Questions<br>
+-Events<br>
+-Job Applications<br>
+<br>
+DO NOT Submit emails with:<br>
+<br>
+-Personal information<br>
+-More than one topic<br>
+<br>
+We care about your emails, but depending on how busy we are, we may take a while to get back to you.<br>
+<br>
+                                                                             Thank you for understanding,<br>
+The Laugh Team
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Laughable Gaming Platform. Built with ❤️ for the web gaming community.</p>
+<button id="showButton">View Terms of Service</button>
+
+<!-- Overlay element -->
+<div class="overlay" id="overlay">
+  <div class="overlay-text">
+    <h2>Terms of Service</h2>
+
+    <p><strong>Welcome to Laughable!</strong>  
+    We’re a gaming platform that provides fun, family-friendly games for all ages. By using our website, you agree to the following terms:</p>
+
+    <ul>
+      <li><strong>1. All Ages Welcome:</strong> Our platform is designed for players of all ages. Please enjoy responsibly and respect others while playing.</li>
+      <li><strong>2. No Cheating or Hacking:</strong> Using cheats, hacks, or exploiting bugs in any game is not allowed. This includes attempts to alter gameplay or disrupt the website for others.</li>
+      <li><strong>3. Respect for Everyone:</strong> Bullying, harassment, or offensive content will not be tolerated. We aim to keep the site a safe and positive space for everyone.</li>
+      <li><strong>4. No Accounts or Personal Data:</strong> We do not require accounts or collect personal information to play games on our platform. However, games from third-party providers may have their own terms.</li>
+      <li><strong>5. Third-Party Games:</strong> Some games on our site are provided by third-party developers. We are not responsible for their content, performance, or any terms they apply.</li>
+      <li><strong>6. Liability Disclaimer:</strong> We provide games “as-is” for entertainment only. We are not liable for any harm, injury, or damage resulting from playing games or using our website. This includes technical issues, data loss, or other problems that may occur.</li>
+      <li><strong>7. Site Changes:</strong> We may update or remove games, change the site design, or adjust these Terms of Service at any time. Changes will take effect once posted on this page.</li>
+      <li><strong>8. Acceptance of Terms:</strong> By using this site, you agree to these Terms of Service. If you do not agree, please do not use our platform.</li>
+    </ul>
+
+    <br>
+    <button id="closeButton">Close</button>
+  </div>
+</div>
+<!-- Privacy Policy Button -->
+<button id="privacyButton">View Privacy Policy</button>
+
+<!-- Privacy Policy Overlay -->
+<div class="overlay" id="privacyOverlay">
+  <div class="overlay-text">
+    <h2>Privacy Policy</h2>
+
+    <p><strong>Welcome to Laughable!</strong>  
+    Your privacy is important to us. This Privacy Policy explains what information we collect and how it is used.</p>
+
+    <ul>
+      <li><strong>1. Information We Collect:</strong> We only collect anonymous gameplay statistics, such as which games are played and whether a game is liked or disliked.</li>
+      <li><strong>2. Contact Information:</strong> If you email us, we will collect the information you send (such as your email address and message) in order to respond to your inquiry.</li>
+      <li><strong>3. No Accounts:</strong> We do not require accounts, and we do not collect personal information through registration.</li>
+      <li><strong>4. Third-Party Services:</strong> Some games on our site are provided by third-party developers. These third parties may collect their own information in accordance with their privacy policies.</li>
+      <li><strong>5. Use of Data:</strong> Any data we collect is used to improve our website, track game popularity, and respond to user feedback.</li>
+      <li><strong>6. Security:</strong> While we take reasonable steps to protect information, we cannot guarantee complete security of any data transmitted over the internet.</li>
+      <li><strong>7. Changes to Policy:</strong> We may update this Privacy Policy at any time, with changes taking effect once posted on this page.</li>
+    </ul>
+
+    <br>
+    <button id="privacyClose">Close</button>
+  </div>
+</div>
+
+    </footer>
+
+    <script>
+
+        // === CONFIGURATION ===
+        const SUPABASE_URL = 'https://zbeeshthovwwlnlfhjvr.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpiZWVzaHRob3Z3d2xubGZoanZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0MTMwMjQsImV4cCI6MjA2OTk4OTAyNH0.isTkiwu4vm0b0GwzjoZi48gN_OnJsl-J8zGwo0QPv3Q';
+        const STATS_TABLE = 'game_stats';
+        
+        // Initialize Supabase client
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // === GAME DATA ===
+        const games = [
+            {
+                key: 'ragdoll-hit',
+                title: 'Ragdoll Hit',
+                img: 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse4.mm.bing.net%2Fth%2Fid%2FOIP.vOkYUBgbey1zqV-eeBua2gHaHa%3Fpid%3DApi&f=1&ipt=29cae2d9d44ace181344287f8d85f98ab8cee89f443d27b8d1d6c18d67d1b98e&ipo=images',
+                desc: 'Smash through enemy ragdolls with dozens of weapons, or just your fists! Physics-based combat at its finest.',
+                tags: ['Action', 'Physics', 'Combat'],
+                html: `<!DOCTYPE html>
+<html style="height:100%;width:100%;">
+<head>
+    <title>Ragdoll Hit</title>
+    <style>
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; }
+        iframe { width: 100vw; height: 100vh; border: none; display: block; }
+    </style>
+</head>
+<body>
+    <iframe src="https://www.gamenora.com/embed/ragdoll-hit" allowfullscreen></iframe>
+</body>
+</html>`
+            },
+            {
+                key: 'escaperoad',
+                title: 'Escape Road',
+                img: 'https://escaperoadgame.io/data/image/game/escaperoad.png',
+                desc: 'Rob a bank, escape cops,and collect stolen cash in this action packed game!',
+                tags: ['Action', 'Endless', 'Skill'],
+                html: `<!DOCTYPE html>
+<html style="height:100%;width:100%;">
+<head>
+    <title>Escape Road</title>
+    <style>
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; }
+        iframe { width: 100vw; height: 100vh; border: none; display: block; }
+    </style>
+</head>
+<body>
+    <iframe src="https://azgames.io/escape-road.embed" allowfullscreen></iframe>
+</body>
+</html>`
+            },
+            {
+                key: 'minecraft1.8.8',
+                title: 'Minecraft Java Edition 1.8.8',
+                img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSqJgxv3B1031v7oa2iIrOK6cJWK9jPdqOl-WuePuJ3ygwO6gxLe8lkNo9e0ah3aXvdG8&usqp=CAU',
+                desc: 'Build, craft, mine, and survive in an infinite sandbox world. See how far you (and your computer) can get!',
+                tags: ['Casual', 'Combat', 'Skill'],
+                html: `<!DOCTYPE html>
+<html style="height:100%;width:100%;">
+<head>
+    <title>Minecraft Java Edition 1.8.8</title>
+    <style>
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; }
+        iframe { width: 100vw; height: 100vh; border: none; display: block; }
+    </style>
+</head>
+<body>
+    <iframe src="https://eaglercraft.org" allowfullscreen></iframe>
+</body>
+</html>`
+            },
+            {
+                key: 'shellshockedio',
+                title: 'Shell Shockers',
+                img: 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIP.8Lku9SH8mnnD3U496E2kPAHaHa%3Fr%3D0%26pid%3DApi&f=1&ipt=8ac4928162c77e806eb9d999fdd2ffcb7b2d81850d0cbe46590bf5d1215daee0&ipo=images',
+                desc: 'A fun and exhilarating FPS game, as long as you don’t crack! But you can be cracked without… nevermind. Play every egg for himself in this awesome shooter.',
+                tags: ['Action', 'Combat', 'Skill'],
+                html: `<!DOCTYPE html>
+<html style="height:100%;width:100%;">
+<head>
+    <title>Shell Shockers</title>
+    <style>
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; }
+        iframe { width: 100vw; height: 100vh; border: none; display: block; }
+    </style>
+</head>
+<body>
+    <iframe src="https://www.crazygames.com/embed/shellshockersio" allowfullscreen></iframe>
+</body>
+</html>`
+ },
+            {
+                key: 'cubes2048',
+                title: 'Cubes 2048',
+                img: 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%2Fid%2FOIP.OJpGEEo1-oYKG2Qt0i_jwwAAAA%3Fr%3D0%26pid%3DApi&f=1&ipt=b1377a00b0e3aa11ca05be91cbfa9a5e2677c2ea779b59f8f31194cfdbe417ed&ipo=images',
+                desc: 'Absorb tiles and other players (and some bots) to become the biggest tile on the server!',
+                tags: ['Puzzle', 'Numbers', 'Strategy'],
+                html:    `<!DOCTYPE html>
+<html style="height:100%;width:100%;">
+<head>
+    <title>Shell Shockers</title>
+    <style>
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; }
+        iframe { width: 100vw; height: 100vh; border: none; display: block; }
+    </style>
+</head>
+<body>
+    <iframe src="https://www.crazygames.com/embed/cubes-2048-io" allowfullscreen></iframe>
+</body>
+</html>`         },
+            {
+                key: 'blockpost',
+                title: 'Block Post',
+                img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9gFhCgVMn0SGn0bi17jxIdCytwM9Bg18YwCkdl0Z1g4lrvDE9rsxXeyLkE52tB1f6cUk&usqp=CAU',
+                desc: 'An awesome fast passed voxel style first person shooter game! (otherwise known as AFPVSFPS game) Play classic battle royale and 1v1!',
+                tags: ['Action', 'Combat', 'Strategy'],
+                html:    `<!DOCTYPE html>
+<html style="height:100%;width:100%;">
+<head>
+    <title>Block Post</title>
+    <style>
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; }
+        iframe { width: 100vw; height: 100vh; border: none; display: block; }
+    </style>
+</head>
+<body>
+    <iframe src="https://www.gamenora.com/embed/blockpost/" allowfullscreen></iframe>
+</body>
+</html>`         },
+
+          {
+                key: 'flappydunk',
+                title: 'Flappy Dunk',
+                img: 'https://static.keygames.com/6/112606/90893/1024x1024/flappy-dunk.webp',
+                desc: 'Carefully flap your way through a treacherous path full of falls and.. basketball hoops!? Enjoy this simple but fun game.',
+                tags: ['Arcade', 'Casual', 'Endless'],
+                html:    `<!DOCTYPE html>
+<html style="height:100%;width:100%;">
+<head>
+    <title>Flappy Dunk</title>
+    <style>
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; }
+        iframe { width: 100vw; height: 100vh; border: none; display: block; }
+    </style>
+</head>
+<body>
+    <iframe src="https://www.crazygames.com/embed/flappy-dunk/" allowfullscreen></iframe>
+</body>
+</html>`         },
+          {
+                key: 'monkeymart',
+                title: 'Monkey Mart',
+                img: 'https://cdn5.beatstars.com/eyJidWNrZXQiOiJidHMtY29udGVudCIsImtleSI6InVzZXJzL3Byb2QvNjE5MDk4Ny9pbWFnZS8xNzAyMDI3MDM4L3RoaS10LWstY2gtYS1jLXQtbi0zLS5wbmciLCJlZGl0cyI6eyJyZXNpemUiOnsiZml0IjoiZmlsbCIsIndpZHRoIjoyNDAsImhlaWdodCI6MjQwfSwidG9Gb3JtYXQiOiJ3ZWJwIn19?t=1702027038978',
+                desc: 'Buy plants, animals, and employees to expand a massive store chain, with a catch! You and everyone else are monkeys!',
+                tags: ['Adventure', 'Casual', 'Strategy'],
+                html:    `<!DOCTYPE html>
+<html style="height:100%;width:100%;">
+<head>
+    <title>Monkey Mart</title>
+    <style>
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; }
+        iframe { width: 100vw; height: 100vh; border: none; display: block; }
+    </style>
+</head>
+<body>
+    <iframe src="https://azgames.io/monkey-mart.embed" allowfullscreen></iframe>
+</body>
+</html>`         },
+          {
+                key: 'smashkarts',
+                title: 'Smash Karts',
+                img: 'https://imgs.crazygames.com/smash-karts_1x1/20250820055325/smash-karts_1x1-cover?format=auto&quality=100&metadata=none&width=1200',
+                desc: 'Race around an open online arena, firing everything from missiles to nukes at your enemies.',
+                tags: ['Action', 'Combat', 'Skill'],
+                html:    `<!DOCTYPE html>
+<html style="height:100%;width:100%;">
+<head>
+    <title>Smash Karts</title>
+    <style>
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; }
+        iframe { width: 100vw; height: 100vh; border: none; display: block; }
+    </style>
+</head>
+<body>
+    <iframe src="https://azgames.io/smash-karts.embed" allowfullscreen></iframe>
+</body>
+</html>`         },
+ {
+                key: 'polytrack',
+                title: 'Poly Track',
+                img: 'https://www.kizgame.com/thumbs/polytrack_small.webp',
+                desc: 'Race against time in this awesome fast paced low poly fun game! Say that 10 times fast.',
+                tags: ['Casual', 'Physics', 'Skill'],
+                html:    `<!DOCTYPE html>
+<html style="height:100%;width:100%;">
+<head>
+    <title>Poly Track</title>
+    <style>
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; }
+        iframe { width: 100vw; height: 100vh; border: none; display: block; }
+    </style>
+</head>
+<body>
+    <iframe src="https://www.kodub.com/apps/polytrack" allowfullscreen></iframe>
+</body>
+</html>`         },
+
+
+ {
+                key: 'surio',
+                title: 'Sur io',
+                img: 'https://img.nutwg.com/uploads/2024/07/2024-07-19-132043684.webp',
+                desc: 'Play a rebooted classic, everything from the older battle royale io games you need. Also this is our editor, Jackies favorite game.',
+                tags: ['Action', 'Combat', 'Skill', 'io'],
+                html:    `<!DOCTYPE html>
+<html style="height:100%;width:100%;">
+<head>
+    <title>Sur io</title>
+    <style>
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; }
+        iframe { width: 100vw; height: 100vh; border: none; display: block; }
+    </style>
+</head>
+<body>
+    <iframe src="https://suroi.io/" allowfullscreen></iframe>
+</body>
+</html>`         },
+ {
+                key: 'retrobowl',
+                title: 'Retro Bowl',
+                img: 'https://www.gamenora.com/upload/games/thumbnails/Retro%20Bowl.webp',
+                desc: 'A fun and casual football game anyone can pick up and play, for fun or to beat your best friends scores.',
+                tags: ['Casual', 'Skill', 'Sport'],
+                html:    `<!DOCTYPE html>
+<html style="height:100%;width:100%;">
+<head>
+    <title>Retro Bowl</title>
+    <style>
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; }
+        iframe { width: 100vw; height: 100vh; border: none; display: block; }
+    </style>
+</head>
+<body>
+    <iframe src="https://azgames.io/retro-bowl.embed" allowfullscreen></iframe>
+</body>
+</html>`         },
+ {
+                key: 'cudeslidereplit',
+                title: 'Cube Slide',
+                img: 'https://www.shutterstock.com/pixelsquid/assets_v2/234/2347221473162171902/jpeg-600/G03.jpg',
+                desc: 'A calm fun platformer game with an intresting puzzle-like look.',
+                tags: ['Casual', 'Endless', 'Puzzle'],
+                html:    `<!DOCTYPE html>
+<html style="height:100%;width:100%;">
+<head>
+    <title>Cube Slide</title>
+    <style>
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; }
+        iframe { width: 100vw; height: 100vh; border: none; display: block; }
+    </style>
+</head>
+<body>
+    <iframe src="https://cubeslide.replit.app/?utm_source=email&utm_medium=iterable&utm_campaign=use_case_emails" allowfullscreen></iframe>
+</body>
+</html>`         },
+ {
+                key: 'loepicplatformer',
+                title: 'Epic Platformer',
+                img: 'https://Joe-Dude.github.io/Online_Game_File_Platformer_Claude/Screenshot 2025-08-24 8.50.45 AM.png',
+                desc: 'An epic platformer game developed by us! Enjoy these 10 levels of experimental fun!',
+                tags: ['Casual', 'Physics', 'A Laughable Original'],
+                html:    `<!DOCTYPE html>
+<html style="height:100%;width:100%;">
+<head>
+    <title>Epic Platformer</title>
+    <style>
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; }
+        iframe { width: 100vw; height: 100vh; border: none; display: block; }
+    </style>
+</head>
+<body>
+    <iframe src="https://Joe-Dude.github.io/Online_Game_File_Platformer_Claude/Platformer.html
+" allowfullscreen></iframe>
+</body>
+</html>`         },
+]
+
+        // === STATE MANAGEMENT ===
+        let selectedTag = "";
+        let gameStats = {};
+        let isLoading = false;
+
+        // === UTILITY FUNCTIONS ===
+        const debounce = (func, wait) => {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        };
+
+        const showNotification = (message, type = 'info') => {
+            // Simple notification system
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#72e0d1' : '#ff6b6b'};
+                color: ${type === 'success' ? '#181c24' : '#fff'};
+                padding: 1rem 2rem;
+                border-radius: 8px;
+                z-index: 1000;
+                font-weight: 600;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+                transform: translateX(300px);
+                transition: transform 0.3s ease;
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.style.transform = 'translateX(0)', 100);
+            setTimeout(() => {
+                notification.style.transform = 'translateX(300px)';
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 3000);
+        };
+
+        // === TAG MANAGEMENT ===
+        const getAllTags = () => {
+            return Array.from(new Set(games.flatMap(game => game.tags))).sort();
+        };
+
+        const renderTags = () => {
+            const tagsContainer = document.getElementById('games-tags');
+            const allTags = getAllTags();
+            
+            tagsContainer.innerHTML = '';
+            
+            // "All" button
+            const allButton = document.createElement('button');
+            allButton.textContent = "All Games";
+            allButton.className = selectedTag === "" ? "selected" : "";
+            allButton.onclick = () => selectTag("");
+            tagsContainer.appendChild(allButton);
+            
+            // Individual tag buttons
+            allTags.forEach(tag => {
+                const tagButton = document.createElement('button');
+                tagButton.textContent = tag;
+                tagButton.className = selectedTag === tag ? "selected" : "";
+                tagButton.onclick = () => selectTag(tag);
+                tagsContainer.appendChild(tagButton);
+            });
+        };
+
+        const selectTag = (tag) => {
+            selectedTag = tag;
+            renderTags();
+            renderGames();
+        };
+
+        // === STATS MANAGEMENT ===
+        const fetchGameStats = async (gameKey) => {
+            try {
+                const { data, error } = await supabase
+                    .from(STATS_TABLE)
+                    .select('likes,dislikes,plays')
+                    .eq('key', gameKey)
+                    .single();
+                
+                if (error && error.code !== 'PGRST116') {
+                    console.warn(`Error fetching stats for ${gameKey}:`, error);
+                }
+                
+                gameStats[gameKey] = data || { likes: 0, dislikes: 0, plays: 0 };
+            } catch (error) {
+                console.warn(`Failed to fetch stats for ${gameKey}:`, error);
+                gameStats[gameKey] = { likes: 0, dislikes: 0, plays: 0 };
+            }
+        };
+
+        const updateGameStats = async (gameKey, action) => {
+            try {
+                const currentStats = gameStats[gameKey] || { likes: 0, dislikes: 0, plays: 0 };
+                const updatedStats = { ...currentStats };
+                
+                switch (action) {
+                    case 'like':
+                        updatedStats.likes = (updatedStats.likes || 0) + 1;
+                        break;
+                    case 'dislike':
+                        updatedStats.dislikes = (updatedStats.dislikes || 0) + 1;
+                        break;
+                    case 'play':
+                        updatedStats.plays = (updatedStats.plays || 0) + 1;
+                        break;
+                }
+                
+                const { error } = await supabase
+                    .from(STATS_TABLE)
+                    .upsert([{ key: gameKey, ...updatedStats }], { onConflict: ['key'] });
+                
+                if (error) {
+                    throw error;
+                }
+                
+                gameStats[gameKey] = updatedStats;
+                renderGames();
+                
+                if (action === 'like') showNotification('Thanks for the like! 👍', 'success');
+                if (action === 'dislike') showNotification('Feedback noted 👎', 'info');
+                
+            } catch (error) {
+                console.error(`Failed to update stats for ${gameKey}:`, error);
+                showNotification('Unable to record action. Please try again.', 'error');
+            }
+        };
+
+        // Make updateGameStats globally available
+        window.updateGameStats = updateGameStats;
+
+        // === GAME RENDERING ===
+        const renderGames = async () => {
+            const gamesContainer = document.getElementById('games-grid');
+            
+            if (isLoading) return;
+            isLoading = true;
+            
+            // Filter games by selected tag
+            const filteredGames = selectedTag 
+                ? games.filter(game => game.tags.includes(selectedTag))
+                : games;
+            
+            if (filteredGames.length === 0) {
+                gamesContainer.innerHTML = '<div class="empty-state">🎮 No games found for the selected category. Try selecting "All Games"!</div>';
+                isLoading = false;
+                return;
+            }
+            
+            // Show loading state
+            gamesContainer.innerHTML = '<div class="loading"></div>';
+            
+            // Fetch stats for all filtered games
+            await Promise.all(filteredGames.map(game => fetchGameStats(game.key)));
+            
+            // Render game cards
+            gamesContainer.innerHTML = '';
+            filteredGames.forEach(game => {
+                const stats = gameStats[game.key] || { likes: 0, dislikes: 0, plays: 0 };
+                
+                const gameCard = document.createElement('div');
+                gameCard.className = 'game-card';
+                gameCard.innerHTML = `
+                    <img src="${game.img}" alt="${game.title}" loading="lazy">
+                    <h3>${game.title}</h3>
+                    <div class="game-tags">
+                        ${game.tags.map(tag => `<span class="game-tag">${tag}</span>`).join('')}
+                    </div>
+                    <div class="game-stats">
+                        <button class="stat-btn" onclick="updateGameStats('${game.key}', 'like')" title="Like this game">
+                            👍 <span class="stat-count">${stats.likes}</span>
+                        </button>
+                        <button class="stat-btn" onclick="updateGameStats('${game.key}', 'dislike')" title="Dislike this game">
+                            👎 <span class="stat-count">${stats.dislikes}</span>
+                        </button>
+                        <span class="play-count" title="Times played">▶️ ${stats.plays}</span>
+                    </div>
+                    
+                    <div class="game-actions">
+                        <button onclick="playGame('${game.key}')" type="button">Play Now</button>
+                    </div>
+                `;
+                gamesContainer.appendChild(gameCard);
+            });
+            
+            isLoading = false;
+        };
+
+        // === GAME LAUNCHING ===
+// Opens an about:blank window with a Start screen.
+// After clicking Start, the game HTML is injected into an <iframe>
+// WITHOUT ever embedding the game's HTML inside a <script>.
+const playGame = (gameKey) => {
+  const game = games.find(g => g.key === gameKey);
+  if (!game || !game.html) {
+    showNotification('Game not available!', 'error');
+    return;
+  }
+
+  // Open child window
+  const w = window.open('about:blank', '_blank', 'width=1024,height=768');
+  if (!w) {
+    showNotification('Please allow popups to play games!', 'error');
+    return;
+  }
+
+  // Minimal shell: no scripts that reference game.html
+  const safeTitle = String(game.title || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const safeDesc  = String(game.desc  || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const shell = [
+    '<!DOCTYPE html><html><head><meta charset="utf-8"><title>', safeTitle, '</title>',
+    '<style>',
+    ':root{color-scheme:dark;}html,body{height:100%;margin:0}',
+    'body{background:#000;color:#fff;font-family:Arial,Helvetica,sans-serif;',
+    'display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}',
+    '#intro{max-width:720px;padding:1.25rem}',
+    '#intro h2{margin:0 0 .5rem 0;font-size:1.5rem}',
+    '#intro .desc{color:#cfcfcf;line-height:1.4}',
+    '#startBtn{padding:.8rem 1.5rem;font-size:1rem;margin-top:1rem;cursor:pointer;border-radius:10px;',
+    'background:#72e0d1;color:#181c24;border:none;font-weight:700}',
+    '#startBtn:hover{background:#5bc5b8}',
+    '#frame{display:none;width:100vw;height:100vh;border:0}',
+    '</style></head><body>',
+    '<div id="intro"><h2>', safeTitle, '</h2><div class="desc">', safeDesc, '</div>',
+    '<button id="startBtn">Start Game</button></div>',
+    '<iframe id="frame" allowfullscreen></iframe>',
+    '</body></html>'
+  ].join('');
+
+  w.document.open();
+  w.document.write(shell);
+  w.document.close();
+
+  // Attach events from the opener (no inline <script> in the child page)
+  const attach = () => {
+    const doc = w.document;
+    const btn = doc.getElementById('startBtn');
+    const intro = doc.getElementById('intro');
+    const frame = doc.getElementById('frame');
+    if (!btn || !frame) return;
+
+    btn.addEventListener('click', () => {
+      // Hide intro, show game frame
+      if (intro) intro.style.display = 'none';
+      frame.style.display = 'block';
+
+      // Load the game HTML without putting it inside a <script>
+      if ('srcdoc' in frame) {
+        frame.srcdoc = game.html; // safest path—no script parsing issues
+      } else {
+        // Fallback for very old browsers: blob URL
+        const blob = new Blob([game.html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        frame.src = url;
+      }
+
+      // Count a play (from the opener)
+      try { updateGameStats(gameKey, 'play'); } catch (_) {}
+    }, { once: true });
+  };
+
+  if (w.document.readyState === 'complete') {
+    attach();
+  } else {
+    w.addEventListener('load', attach, { once: true });
+  }
+};
+
+
+
+
+        const loadCustomGame = () => {
+            const gameCode = document.getElementById('game-html-input').value.trim();
+            
+            if (!gameCode) {
+                showNotification('Please enter some HTML code first!', 'error');
+                return;
+            }
+            
+            try {
+                const gameWindow = window.open('about:blank', '_blank', 'width=800,height=600');
+                if (gameWindow) {
+                    gameWindow.document.open();
+                    gameWindow.document.write(gameCode);
+                    gameWindow.document.close();
+                    showNotification('Custom game launched! 🚀', 'success');
+                } else {
+                    showNotification('Please allow popups to launch your game!', 'error');
+                }
+            } catch (error) {
+                console.error('Error launching custom game:', error);
+                showNotification('Error launching your game. Please check the HTML code.', 'error');
+            }
+        };
+
+        // Make functions globally available
+        window.playGame = playGame;
+        window.loadCustomGame = loadCustomGame;
+
+        // === SMOOTH SCROLLING ===
+        document.addEventListener('DOMContentLoaded', () => {
+            // Smooth scrolling for navigation links
+            const navLinks = document.querySelectorAll('nav a[href^="#"]');
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    if (targetSection) {
+                        targetSection.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+
+        // === SUPABASE HEARTBEAT ===
+        const maintainConnection = () => {
+            setInterval(async () => {
+                try {
+                    const { data, error } = await supabase
+                        .from('heartbeat')
+                        .select('val')
+                        .eq('key', 'service')
+                        .single();
+                    
+                    let val = (data && data.val) ? data.val : 1;
+                    val = val >= 10 ? 1 : val + 1;
+                    
+                    await supabase
+                        .from('heartbeat')
+                        .upsert([{ key: 'service', val }], { onConflict: ['key'] });
+                } catch (error) {
+                    console.warn('Heartbeat failed:', error);
+                }
+            }, 30000);
+        };
+
+        // === INITIALIZATION ===
+        const initializeApp = async () => {
+            try {
+                renderTags();
+                await renderGames();
+                maintainConnection();
+                console.log('🎮 Laughable Gaming Platform initialized successfully!');
+            } catch (error) {
+                console.error('Error initializing app:', error);
+                showNotification('App initialization failed. Some features may not work.', 'error');
+            }
+        };
+
+        // Start the app
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            initializeApp();
+        }
+const overlay = document.getElementById('overlay');
+const showButton = document.getElementById('showButton');
+const closeButton = document.getElementById('closeButton');
+
+showButton.addEventListener('click', () => {
+  overlay.style.display = 'flex';
+  setTimeout(() => {
+    overlay.classList.add('show');
+  }, 10);
+});
+
+closeButton.addEventListener('click', () => {
+  overlay.classList.remove('show');
+  setTimeout(() => {
+    overlay.style.display = 'none';
+  }, 400);
+});
+const privacyOverlay = document.getElementById('privacyOverlay');
+const privacyButton = document.getElementById('privacyButton');
+const privacyClose = document.getElementById('privacyClose');
+
+privacyButton.addEventListener('click', () => {
+  privacyOverlay.style.display = 'flex';
+  setTimeout(() => {
+    privacyOverlay.classList.add('show');
+  }, 10);
+});
+
+privacyClose.addEventListener('click', () => {
+  privacyOverlay.classList.remove('show');
+  setTimeout(() => {
+    privacyOverlay.style.display = 'none';
+  }, 400);
+});
+
+// === SAFE SEARCH FUNCTIONALITY - ADD TO YOUR EXISTING <script> SECTION ===
+        // This version works WITH your existing functions instead of replacing them
+        
+        // Search state variables
+        let currentSearchQuery = '';
+        let selectedSuggestionIndex = -1;
+
+        // Search elements
+        let searchInput, clearButton, suggestionsContainer, searchInfo;
+
+        // Initialize search functionality
+        const initializeSearch = () => {
+            searchInput = document.getElementById('gameSearch');
+            clearButton = document.getElementById('clearSearch');
+            suggestionsContainer = document.getElementById('searchSuggestions');
+            searchInfo = document.getElementById('searchInfo');
+            
+            if (!searchInput || !clearButton || !suggestionsContainer || !searchInfo) {
+                console.warn('Search elements not found. Make sure you added the HTML.');
+                return;
+            }
+            
+            setupSearchEvents();
+            console.log('🔍 Search functionality initialized!');
+        };
+
+        // Set up search event listeners
+        const setupSearchEvents = () => {
+            searchInput.addEventListener('input', debounceSearch((e) => {
+                handleSearch(e.target.value);
+            }, 300));
+
+            searchInput.addEventListener('keydown', (e) => {
+                handleSearchKeyNavigation(e);
+            });
+
+            searchInput.addEventListener('focus', () => {
+                if (currentSearchQuery.trim()) {
+                    showSearchSuggestions();
+                }
+            });
+
+            clearButton.addEventListener('click', () => {
+                clearSearch();
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.search-container')) {
+                    hideSearchSuggestions();
+                }
+            });
+        };
+
+        // Debounce function for search
+        const debounceSearch = (func, wait) => {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        };
+
+        const handleSearch = (query) => {
+    currentSearchQuery = query.trim();
+    
+    if (currentSearchQuery) {
+        clearButton.classList.add('show');
+    } else {
+        clearButton.classList.remove('show');
+    }
+
+    if (currentSearchQuery) {
+        const filteredGames = filterGamesBySearch(currentSearchQuery);
+        showSearchSuggestions(filteredGames);
+        updateSearchInfo(filteredGames);
+        
+        // Render filtered games directly
+        renderFilteredGames(filteredGames);
+    } else {
+        hideSearchSuggestions();
+        hideSearchInfo();
+        
+        // Reset to normal rendering
+        selectedTag = "";
+        renderTags();
+        renderGames();
+    }
+};
+
+        // Filter games by search query
+        const filterGamesBySearch = (query) => {
+            if (!query) return [...games];
+
+            const lowerQuery = query.toLowerCase();
+            
+            return games.filter(game => {
+                const titleMatch = game.title.toLowerCase().includes(lowerQuery);
+                const descMatch = game.desc.toLowerCase().includes(lowerQuery);
+                const tagMatch = game.tags.some(tag => 
+                    tag.toLowerCase().includes(lowerQuery)
+                );
+                
+                return titleMatch || descMatch || tagMatch;
+            });
+        };
+
+        // Apply search results by temporarily modifying the games rendering
+        const applySearchFilter = (searchResults) => {
+            // Temporarily store original games
+            const originalGames = [...games];
+            
+            // Replace games array with search results
+            games.length = 0;
+            games.push(...searchResults);
+            
+            // Reset tag selection and render
+            selectedTag = "";
+            renderTags();
+            renderGames();
+            
+            // Restore original games after a short delay
+            setTimeout(() => {
+                if (!currentSearchQuery) { // Only restore if search was cleared
+                    games.length = 0;
+                    games.push(...originalGames);
+                }
+            }, 100);
+        };
+
+        // Show search suggestions
+        const showSearchSuggestions = (filteredGames) => {
+            if (!currentSearchQuery || filteredGames.length === 0) {
+                hideSearchSuggestions();
+                return;
+            }
+
+            const suggestions = filteredGames.slice(0, 5);
+            
+            if (suggestions.length === 0) {
+                suggestionsContainer.innerHTML = '<div class="no-results">No games found matching your search.</div>';
+            } else {
+                suggestionsContainer.innerHTML = suggestions
+                    .map((game, index) => createSuggestionHTML(game, index))
+                    .join('');
+                
+                const suggestionItems = suggestionsContainer.querySelectorAll('.suggestion-item');
+                suggestionItems.forEach((item, index) => {
+                    item.addEventListener('click', () => {
+                        selectSearchSuggestion(suggestions[index]);
+                    });
+                });
+            }
+            
+            suggestionsContainer.classList.add('show');
+            selectedSuggestionIndex = -1;
+        };
+
+        // Hide search suggestions
+        const hideSearchSuggestions = () => {
+            suggestionsContainer.classList.remove('show');
+            selectedSuggestionIndex = -1;
+        };
+
+        // Create suggestion HTML
+        const createSuggestionHTML = (game, index) => {
+            return `
+                <div class="suggestion-item" data-index="${index}">
+                    <img src="${game.img}" alt="${game.title}" loading="lazy">
+                    <div class="suggestion-content">
+                        <h4 class="suggestion-title">${highlightSearchMatch(game.title, currentSearchQuery)}</h4>
+                        <div class="suggestion-tags">
+                            ${game.tags.map(tag => `<span class="suggestion-tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        // Highlight matching text
+        const highlightSearchMatch = (text, query) => {
+            if (!query) return text;
+            
+            const regex = new RegExp(`(${escapeRegExp(query)})`, 'gi');
+            return text.replace(regex, '<strong style="color: #5bc5b8;">$1</strong>');
+        };
+
+        // Escape regex characters
+        const escapeRegExp = (string) => {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        };
+
+        // Handle keyboard navigation
+        const handleSearchKeyNavigation = (e) => {
+            const suggestions = suggestionsContainer.querySelectorAll('.suggestion-item');
+            
+            switch (e.key) {
+                case 'ArrowDown':
+                    e.preventDefault();
+                    selectedSuggestionIndex = Math.min(
+                        selectedSuggestionIndex + 1, 
+                        suggestions.length - 1
+                    );
+                    updateSuggestionSelection(suggestions);
+                    break;
+                    
+                case 'ArrowUp':
+                    e.preventDefault();
+                    selectedSuggestionIndex = Math.max(
+                        selectedSuggestionIndex - 1, 
+                        -1
+                    );
+                    updateSuggestionSelection(suggestions);
+                    break;
+                    
+                case 'Enter':
+                    e.preventDefault();
+                    if (selectedSuggestionIndex >= 0 && suggestions[selectedSuggestionIndex]) {
+                        const gameIndex = parseInt(suggestions[selectedSuggestionIndex].dataset.index);
+                        const filteredGames = filterGamesBySearch(currentSearchQuery);
+                        selectSearchSuggestion(filteredGames[gameIndex]);
+                    } else {
+                        const filteredGames = filterGamesBySearch(currentSearchQuery);
+                        if (filteredGames.length > 0) {
+                            selectSearchSuggestion(filteredGames[0]);
+                        }
+                    }
+                    break;
+                    
+                case 'Escape':
+                    hideSearchSuggestions();
+                    searchInput.blur();
+                    break;
+            }
+        };
+
+        // Update suggestion selection visual
+        const updateSuggestionSelection = (suggestions) => {
+            suggestions.forEach((item, index) => {
+                if (index === selectedSuggestionIndex) {
+                    item.style.background = 'rgba(114, 224, 209, 0.2)';
+                } else {
+                    item.style.background = '';
+                }
+            });
+        };
+
+        // Select a suggestion and play game
+        const selectSearchSuggestion = (game) => {
+            hideSearchSuggestions();
+            playGame(game.key); // Use your existing playGame function
+        };
+
+        const clearSearch = () => {
+    searchInput.value = '';
+    currentSearchQuery = '';
+    clearButton.classList.remove('show');
+    hideSearchSuggestions();
+    hideSearchInfo();
+    
+    // Reset to normal tag filtering
+    selectedTag = "";
+    renderTags();
+    renderGames();
+    
+    searchInput.focus();
+};
+        // Update search info display
+        const updateSearchInfo = (filteredGames) => {
+            const count = filteredGames.length;
+            const query = currentSearchQuery;
+            
+            if (count === 0) {
+                searchInfo.innerHTML = `No games found for "<span class="search-term">${query}</span>"`;
+            } else {
+                searchInfo.innerHTML = `Found ${count} game${count !== 1 ? 's' : ''} for "<span class="search-term">${query}</span>"`;
+            }
+            
+            searchInfo.classList.add('show');
+        };
+
+        // Hide search info
+        const hideSearchInfo = () => {
+            searchInfo.classList.remove('show');
+        };
+
+        // Initialize search when the page loads
+        // Add this to your existing DOMContentLoaded event or initialization
+        setTimeout(() => {
+            initializeSearch();
+        }, 500); // Wait for your existing code to load first
+const renderFilteredGames = async (filteredGames) => {
+    const gamesContainer = document.getElementById('games-grid');
+    
+    if (filteredGames.length === 0) {
+        gamesContainer.innerHTML = '<div class="empty-state">🎮 No games found matching your search!</div>';
+        return;
+    }
+    
+    // Show loading state
+    gamesContainer.innerHTML = '<div class="loading"></div>';
+    
+    // Fetch stats for filtered games
+    await Promise.all(filteredGames.map(game => fetchGameStats(game.key)));
+    
+    // Render game cards (same as your existing renderGames logic)
+    gamesContainer.innerHTML = '';
+    filteredGames.forEach(game => {
+        const stats = gameStats[game.key] || { likes: 0, dislikes: 0, plays: 0 };
+        
+        const gameCard = document.createElement('div');
+        gameCard.className = 'game-card';
+        gameCard.innerHTML = `
+            <img src="${game.img}" alt="${game.title}" loading="lazy">
+            <h3>${game.title}</h3>
+            <div class="game-tags">
+                ${game.tags.map(tag => `<span class="game-tag">${tag}</span>`).join('')}
+            </div>
+            <div class="game-stats">
+                <button class="stat-btn" onclick="updateGameStats('${game.key}', 'like')" title="Like this game">
+                    👍 <span class="stat-count">${stats.likes}</span>
+                </button>
+                <button class="stat-btn" onclick="updateGameStats('${game.key}', 'dislike')" title="Dislike this game">
+                    👎 <span class="stat-count">${stats.dislikes}</span>
+                </button>
+                <span class="play-count" title="Times played">▶️ ${stats.plays}</span>
+            </div>
+            <p>${game.desc}</p>
+            <div class="game-actions">
+                <button onclick="playGame('${game.key}')" type="button">Play Now</button>
+            </div>
+        `;
+        gamesContainer.appendChild(gameCard);
+    });
+};
+
+const starwarsfour = () => {
+    const leaderboardHTML = `
+       <!DOCTYPE html>
+<html style="height:100%;width:100%;">
+<head>
+    <title>Star Wars: A New Hope</title>
+    <style>
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; }
+        iframe { width: 100vw; height: 100vh; border: none; display: block; }
+    </style>
+</head>
+<body>
+    <iframe src="https://archive.org/details/starwarsanewhopesaturdayfeb.14th1987cbskirotvchannel7seattlewoc" allowfullscreen scrolling=”no”></iframe>
+</body>
+</html>
+    `;
+    
+    try {
+        const newWindow = window.open('about:blank', '_blank', 'width=900,height=700');
+        if (newWindow) {
+            newWindow.document.open();
+            newWindow.document.write(leaderboardHTML);
+            newWindow.document.close();
+            showNotification('May the force be with you.', 'success');
+        } else {
+            showNotification('The force is not with you. Please allow popups!', 'error');
+        }
+    } catch (error) {
+        console.error('Error opening leaderboard:', error);
+        showNotification('Error opening leaderboard. Please try again.', 'error');
+    }
+};
+
+const develop = () => {
+    const leaderboardHTML = `
+       <!DOCTYPE html>
+<html style="height:100%;width:100%;">
+<head>
+    <title>Laughable 4 Developers</title>
+    <style>
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; }
+        iframe { width: 100vw; height: 100vh; border: none; display: block; }
+    </style>
+</head>
+<body>
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScI9hF59XHSisUxuJH_71vlrslpPaIM1eAJUYZa2NCgJinFdg/viewform?usp=header" allowfullscreen scrolling=”no”></iframe>
+</body>
+</html>
+    `;
+    
+    try {
+        const newWindow = window.open('about:blank', '_blank', 'width=900,height=700');
+        if (newWindow) {
+            newWindow.document.open();
+            newWindow.document.write(leaderboardHTML);
+            newWindow.document.close();
+            showNotification('Developer page opened!', 'success');
+        } else {
+            showNotification('The force is not with you. Please allow popups!', 'error');
+        }
+    } catch (error) {
+        console.error('Error opening leaderboard:', error);
+        showNotification('Error opening leaderboard. Please try again.', 'error');
+    }
+};
+
+
+// Make the function globally available
+window.openLeaderboardPage = openLeaderboardPage;
+
+function pythonpyodide() {
+    const runnerHTML = `<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Python Console</title>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"><\/script>
+  <style>
+    body { margin: 0; font-family: monospace; background: #111; color: #0f0; display: flex; flex-direction: column; height: 100vh; }
+    #console { padding: 10px; flex: 1; overflow-y: auto; white-space: pre-wrap; background:#111; }
+    #modes { background:#222; padding:5px; text-align:center; }
+    #modes button { margin:2px; padding:6px 12px; background:#333; border:none; color:#0f0; cursor:pointer; }
+    #modes button.active { background:#0f0; color:#111; }
+    #toolbar { background:#222; padding:5px; text-align:center; }
+    #toolbar button, #toolbar input { margin:2px; padding:6px 12px; background:#333; border:none; color:#0f0; cursor:pointer; }
+    #toolbar button:hover { background:#444; }
+    #inputBar, #scriptBar { display: none; border-top: 1px solid #333; }
+    #cmd { flex: 1; background: #111; color: #0f0; border: none; padding: 10px; font-family: monospace; }
+    #cmd:focus { outline: none; }
+    #editor { width: 100%; height: 200px; background:#111; color:#0f0; border:none; padding:10px; font-family: monospace; }
+    #runBtn { padding:6px 12px; background:#0f0; border:none; color:#111; cursor:pointer; margin:5px; }
+  </style>
+</head>
+<body>
+  <div id="modes">
+    <button id="replMode" class="active">REPL Mode</button>
+    <button id="scriptMode">Script Mode</button>
+  </div>
+
+  <div id="console">Loading Pyodide…</div>
+
+  <div id="toolbar" style="display:none">
+    <button id="clearBtn">Clear Console</button>
+    <button id="saveBtn">Save Script</button>
+    <button id="loadBtn">Load Script</button>
+    <button id="downloadBtn">Download Script</button>
+    <input type="file" id="uploadInput" style="display:none" />
+    <button id="uploadBtn">Upload Script</button>
+  </div>
+
+  <div id="inputBar"><input id="cmd" placeholder="Type Python here..."/></div>
+
+  <div id="scriptBar">
+    <textarea id="editor"># Paste your Python game here
+print("Welcome to Python Game!")
+name = input("What is your name? ")
+print("Hello,", name)
+</textarea><br>
+    <button id="runBtn">Run Script</button>
+  </div>
+
+  <script>
+    let pyodideReady = loadPyodide();
+    let waitingInput = null;
+
+    // Hook console printing
+    function console_log(text) {
+      const con = document.getElementById("console");
+      con.textContent += "\\n" + text;
+      con.scrollTop = con.scrollHeight;
+    }
+    window.console_log = console_log;
+
+    async function init() {
+      let pyodide = await pyodideReady;
+      await pyodide.runPythonAsync(\`
+import sys, builtins
+from js import console_log, get_input
+
+class ConsoleIO:
+    def write(self, s):
+        if s.strip() != "":
+            console_log(s)
+    def flush(self): pass
+
+sys.stdout = ConsoleIO()
+sys.stderr = ConsoleIO()
+
+def input(prompt=""):
+    if prompt:
+        console_log(prompt)
+    return get_input().strip()
+\`);
+      console_log("Pyodide ready! Choose REPL or Script mode.");
+      return pyodide;
+    }
+
+    function get_input() {
+      return new Promise(resolve => { waitingInput = resolve; });
+    }
+    window.get_input = get_input;
+
+    let pyodideInstance = init();
+
+    // REPL Mode
+    const inputBox = document.getElementById("cmd");
+    inputBox.addEventListener("keydown", async e => {
+      if (e.key === "Enter") {
+        const code = inputBox.value;
+        inputBox.value = "";
+        console_log(">>> " + code);
+        try {
+          if (waitingInput) {
+            waitingInput(code);
+            waitingInput = null;
+          } else {
+            const pyodide = await pyodideInstance;
+            await pyodide.runPythonAsync(code);
+          }
+        } catch (err) {
+          console_log("Error: " + err);
+        }
+      }
+    });
+
+    // Script Mode
+    const editor = document.getElementById("editor");
+    document.getElementById("runBtn").addEventListener("click", async () => {
+      const code = editor.value;
+      console_log(">>> Running script...");
+      try {
+        const pyodide = await pyodideInstance;
+        await pyodide.runPythonAsync(code);
+      } catch (err) {
+        console_log("Error: " + err);
+      }
+    });
+
+    // Toolbar actions
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      document.getElementById("console").textContent = "";
+    });
+
+    document.getElementById("saveBtn").addEventListener("click", () => {
+      localStorage.setItem("python_script", editor.value);
+      console_log("Script saved to localStorage.");
+    });
+
+    document.getElementById("loadBtn").addEventListener("click", () => {
+      const saved = localStorage.getItem("python_script");
+      if (saved) {
+        editor.value = saved;
+        console_log("Loaded script from localStorage.");
+      } else {
+        console_log("No saved script found.");
+      }
+    });
+
+    document.getElementById("downloadBtn").addEventListener("click", () => {
+      const blob = new Blob([editor.value], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "script.py";
+      a.click();
+      URL.revokeObjectURL(url);
+      console_log("Script downloaded as script.py.");
+    });
+
+    const uploadInput = document.getElementById("uploadInput");
+    document.getElementById("uploadBtn").addEventListener("click", () => uploadInput.click());
+    uploadInput.addEventListener("change", e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        editor.value = ev.target.result;
+        console_log("Script uploaded: " + file.name);
+      };
+      reader.readAsText(file);
+    });
+
+    // Mode switching
+    const replBtn = document.getElementById("replMode");
+    const scriptBtn = document.getElementById("scriptMode");
+    const replBar = document.getElementById("inputBar");
+    const scriptBar = document.getElementById("scriptBar");
+    const toolbar = document.getElementById("toolbar");
+
+    function setMode(mode) {
+      replBtn.classList.remove("active");
+      scriptBtn.classList.remove("active");
+      replBar.style.display = "none";
+      scriptBar.style.display = "none";
+      toolbar.style.display = "none";
+      if (mode === "repl") {
+        replBtn.classList.add("active");
+        replBar.style.display = "flex";
+      } else {
+        scriptBtn.classList.add("active");
+        scriptBar.style.display = "block";
+        toolbar.style.display = "block";
+      }
+    }
+
+    replBtn.addEventListener("click", () => setMode("repl"));
+    scriptBtn.addEventListener("click", () => setMode("script"));
+    setMode("repl");
+  <\/script>
+</body>
+</html>`;
+
+    const win = window.open("about:blank", "PythonConsole", "width=900,height=700");
+    win.document.open();
+    win.document.write(runnerHTML);
+    win.document.close();
+
+          }
+
+
+
+    </script>
+</body>
+</html>
