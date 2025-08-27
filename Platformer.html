@@ -1,0 +1,1355 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <title>Epic Platformer - Ultimate Edition</title>
+ <style>
+   @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+  
+   body {
+     margin: 0;
+     background: linear-gradient(135deg, #0a0a1f, #1a1a3a, #2a1a4a, #1a0a2a);
+     background-size: 400% 400%;
+     animation: gradientShift 8s ease infinite;
+     overflow: hidden;
+     font-family: 'Orbitron', monospace;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     min-height: 100vh;
+   }
+  
+   @keyframes gradientShift {
+     0% { background-position: 0% 50%; }
+     50% { background-position: 100% 50%; }
+     100% { background-position: 0% 50%; }
+   }
+  
+   canvas {
+     display: block;
+     background: linear-gradient(to bottom, #87CEEB 0%, #98D8E8 40%, #B0E0E6 100%);
+     border: 4px solid #444;
+     border-radius: 12px;
+     box-shadow:
+       0 0 30px rgba(0,100,200,0.3),
+       0 8px 32px rgba(0,0,0,0.4),
+       inset 0 0 20px rgba(255,255,255,0.1);
+   }
+  
+   #ui {
+     position: absolute;
+     top: 20px;
+     left: 50%;
+     transform: translateX(-50%);
+     text-align: center;
+     z-index: 10;
+   }
+  
+   #levelName {
+     color: #fff;
+     font-size: 32px;
+     font-weight: 900;
+     text-shadow:
+       0 0 10px #4af,
+       2px 2px 8px #000,
+       0 0 20px rgba(68,170,255,0.5);
+     margin-bottom: 15px;
+     background: linear-gradient(135deg, rgba(0,0,0,0.7), rgba(0,50,100,0.5));
+     padding: 12px 24px;
+     border-radius: 25px;
+     backdrop-filter: blur(15px);
+     border: 2px solid rgba(68,170,255,0.3);
+     animation: titlePulse 2s ease-in-out infinite alternate;
+   }
+  
+   @keyframes titlePulse {
+     0% { text-shadow: 0 0 10px #4af, 2px 2px 8px #000, 0 0 20px rgba(68,170,255,0.5); }
+     100% { text-shadow: 0 0 15px #4af, 2px 2px 8px #000, 0 0 30px rgba(68,170,255,0.8); }
+   }
+  
+   #stats {
+     color: #fff;
+     font-size: 18px;
+     font-weight: 700;
+     text-shadow: 1px 1px 4px #000;
+     background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,30,60,0.4));
+     padding: 8px 20px;
+     border-radius: 20px;
+     backdrop-filter: blur(10px);
+     border: 1px solid rgba(255,255,255,0.2);
+     display: flex;
+     gap: 25px;
+     align-items: center;
+     justify-content: center;
+   }
+  
+   .coin-icon {
+     width: 20px;
+     height: 20px;
+     background: radial-gradient(circle, #ffed4e 0%, #ffaa00 100%);
+     border-radius: 50%;
+     display: inline-block;
+     margin-right: 8px;
+     box-shadow:
+       0 0 15px #ffdd44,
+       0 0 30px rgba(255,221,68,0.5);
+     animation: coinGlow 1.5s ease-in-out infinite alternate;
+     position: relative;
+   }
+  
+   .coin-icon::before {
+     content: '';
+     position: absolute;
+     top: 2px;
+     left: 2px;
+     right: 2px;
+     bottom: 2px;
+     background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), transparent 50%);
+     border-radius: 50%;
+   }
+  
+   @keyframes coinGlow {
+     0% { box-shadow: 0 0 15px #ffdd44, 0 0 30px rgba(255,221,68,0.5); }
+     100% { box-shadow: 0 0 25px #ffdd44, 0 0 50px rgba(255,221,68,0.8); }
+   }
+  
+   #controls {
+     position: absolute;
+     bottom: 20px;
+     right: 20px;
+     color: #fff;
+     font-size: 14px;
+     font-weight: 400;
+     text-shadow: 1px 1px 2px #000;
+     background: linear-gradient(135deg, rgba(0,0,0,0.7), rgba(0,20,40,0.5));
+     padding: 15px;
+     border-radius: 12px;
+     backdrop-filter: blur(8px);
+     border: 1px solid rgba(255,255,255,0.15);
+     line-height: 1.4;
+   }
+  
+   #fps {
+     position: absolute;
+     top: 20px;
+     left: 20px;
+     color: #4af;
+     font-size: 14px;
+     font-weight: 700;
+     background: rgba(0,0,0,0.5);
+     padding: 5px 10px;
+     border-radius: 8px;
+     backdrop-filter: blur(5px);
+   }
+ </style>
+</head>
+<body>
+ <div id="fps">FPS: 60</div>
+ <div id="ui">
+   <div id="levelName">Epic Platformer</div>
+   <div id="stats">
+     <span id="levelInfo">Level 1/10</span>
+     <span><span class="coin-icon"></span><span id="coinCount">0</span></span>
+     <span>Deaths: <span id="deathCount">0</span></span>
+   </div>
+ </div>
+ <div id="controls">
+   <strong>Controls:</strong><br>
+   Arrow Keys / WASD: Move<br>
+   Space / Up Arrow: Jump<br>
+   R: Reset Level<br>
+   <!--P: Pause (disabled)-->
+ </div>
+ <canvas id="game" width="1200" height="700"></canvas>
+ <script>
+   const canvas = document.getElementById("game");
+   const ctx = canvas.getContext("2d");
+   const levelName = document.getElementById("levelName");
+   const levelInfo = document.getElementById("levelInfo");
+   const coinCount = document.getElementById("coinCount");
+   const deathCount = document.getElementById("deathCount");
+   const fpsDisplay = document.getElementById("fps");
+
+
+   const gravity = 0.6;
+   const friction = 0.85;
+   const iceFriction = 0.97;
+   const jumpPower = -16;
+   const maxSpeed = 9;
+  
+   let keys = {};
+   let deaths = 0;
+   let coins = 0;
+   let particles = [];
+   let cameraShake = 0;
+   let paused = false;
+   let lastTime = 0;
+   let fps = 60;
+
+
+   // Sound effects simulation
+   function playSound(type) {
+     // Visual feedback for sound
+     switch(type) {
+       case 'jump':
+         cameraShake = 3;
+         break;
+       case 'death':
+         cameraShake = 10;
+         break;
+       case 'coin':
+         cameraShake = 2;
+         break;
+     }
+   }
+
+
+   class Particle {
+     constructor(x, y, color = '#fff', life = 30, size = 2) {
+       this.x = x;
+       this.y = y;
+       this.velX = (Math.random() - 0.5) * 6;
+       this.velY = (Math.random() - 0.5) * 6 - 3;
+       this.color = color;
+       this.life = life;
+       this.maxLife = life;
+       this.size = Math.random() * size + 1;
+       this.gravity = 0.1;
+       this.bounce = 0.7;
+     }
+    
+     update() {
+       this.x += this.velX;
+       this.y += this.velY;
+       this.velY += this.gravity;
+       this.velX *= 0.99;
+       this.life--;
+      
+       // Bounce off ground
+       if(this.y > canvas.height - 50 && this.velY > 0) {
+         this.velY *= -this.bounce;
+         this.y = canvas.height - 50;
+       }
+     }
+    
+     draw() {
+       const alpha = this.life / this.maxLife;
+       ctx.globalAlpha = alpha;
+      
+       // Glow effect for special particles
+       if(this.color === '#ffdd44') {
+         ctx.shadowColor = this.color;
+         ctx.shadowBlur = 10;
+       }
+      
+       ctx.fillStyle = this.color;
+       ctx.beginPath();
+       ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+       ctx.fill();
+      
+       ctx.shadowBlur = 0;
+       ctx.globalAlpha = 1;
+     }
+   }
+
+
+   class Player {
+     constructor(){
+       this.x = 100;
+       this.y = 0;
+       this.w = 36;
+       this.h = 36;
+       this.velX = 0;
+       this.velY = 0;
+       this.jumping = false;
+       this.onGround = false;
+       this.color = "#4af";
+       this.trail = [];
+       this.animFrame = 0;
+       this.facing = 1;
+     }
+    
+     update(){
+       this.onGround = false;
+       this.animFrame += 0.2;
+      
+       if(keys["ArrowRight"] || keys["d"]) {
+         this.velX += 1.0;
+         this.facing = 1;
+       }
+       if(keys["ArrowLeft"] || keys["a"]) {
+         this.velX -= 1.0;
+         this.facing = -1;
+       }
+      
+       this.velX = Math.max(-maxSpeed, Math.min(maxSpeed, this.velX));
+       this.velX *= friction;
+       this.velY += gravity;
+      
+       if(Math.abs(this.velY) > 18) this.velY = this.velY > 0 ? 18 : -18;
+      
+       this.x += this.velX;
+       this.y += this.velY;
+      
+       // Enhanced trail effect
+       if(Math.abs(this.velX) > 2 || Math.abs(this.velY) > 2) {
+         this.trail.push({x: this.x + this.w/2, y: this.y + this.h/2, time: Date.now()});
+       }
+       if(this.trail.length > 12) this.trail.shift();
+      
+       if(this.y > canvas.height + 200){
+         this.die();
+       }
+     }
+    
+     die() {
+       playSound('death');
+       // Enhanced death particles
+       for(let i = 0; i < 20; i++) {
+         particles.push(new Particle(
+           this.x + this.w/2,
+           this.y + this.h/2,
+           ['#ff4444', '#ff6666', '#ffaaaa'][Math.floor(Math.random() * 3)],
+           50 + Math.random() * 20,
+           4
+         ));
+       }
+       deaths++;
+       deathCount.textContent = deaths;
+       resetLevel();
+     }
+    
+     draw(){
+       ctx.save();
+      
+       // Draw enhanced trail
+       const now = Date.now();
+       this.trail = this.trail.filter(t => now - t.time < 300);
+      
+       for(let i = 0; i < this.trail.length; i++) {
+         const alpha = (i / this.trail.length) * 0.4;
+         const ageAlpha = Math.max(0, 1 - (now - this.trail[i].time) / 300);
+         ctx.globalAlpha = alpha * ageAlpha;
+        
+         const gradient = ctx.createRadialGradient(
+           this.trail[i].x, this.trail[i].y, 0,
+           this.trail[i].x, this.trail[i].y, 15
+         );
+         gradient.addColorStop(0, this.color);
+         gradient.addColorStop(1, 'transparent');
+        
+         ctx.fillStyle = gradient;
+         const size = (i / this.trail.length) * this.w * 0.8;
+         ctx.beginPath();
+         ctx.arc(this.trail[i].x, this.trail[i].y, size/2, 0, Math.PI * 2);
+         ctx.fill();
+       }
+       ctx.globalAlpha = 1;
+      
+       // Draw player with animation
+       const bounce = Math.sin(this.animFrame) * 2;
+       const squish = this.onGround ? 0.9 : 1.0;
+      
+       ctx.translate(this.x + this.w/2, this.y + this.h/2);
+       ctx.scale(this.facing, squish);
+      
+       // Body gradient
+       const gradient = ctx.createLinearGradient(0, -this.h/2, 0, this.h/2);
+       gradient.addColorStop(0, '#66bbff');
+       gradient.addColorStop(0.5, '#4499dd');
+       gradient.addColorStop(1, '#2277bb');
+      
+       ctx.fillStyle = gradient;
+       ctx.fillRect(-this.w/2, -this.h/2 + bounce, this.w, this.h);
+      
+       // Shine effect
+       ctx.fillStyle = 'rgba(255,255,255,0.4)';
+       ctx.fillRect(-this.w/2 + 3, -this.h/2 + 3 + bounce, this.w - 12, this.h/3);
+      
+       // Eyes
+       ctx.fillStyle = '#fff';
+       ctx.fillRect(-8, -8 + bounce, 6, 6);
+       ctx.fillRect(2, -8 + bounce, 6, 6);
+       ctx.fillStyle = '#000';
+       ctx.fillRect(-6, -6 + bounce, 2, 2);
+       ctx.fillRect(4, -6 + bounce, 2, 2);
+      
+       ctx.restore();
+     }
+   }
+
+
+   class Platform {
+     constructor(x,y,w,h,type='normal'){
+       this.x=x;this.y=y;this.w=w;this.h=h;this.type=type;
+       this.sparkles = [];
+       if(type === 'ice') {
+         for(let i = 0; i < 5; i++) {
+           this.sparkles.push({
+             x: Math.random() * w,
+             y: Math.random() * h,
+             phase: Math.random() * Math.PI * 2
+           });
+         }
+       }
+     }
+    
+     update() {
+       if(this.type === 'ice') {
+         this.sparkles.forEach(s => s.phase += 0.1);
+       }
+     }
+    
+     draw(){
+       let gradient;
+       if(this.type === 'ice') {
+         gradient = ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.h);
+         gradient.addColorStop(0, '#cceeff');
+         gradient.addColorStop(0.3, '#aaddff');
+         gradient.addColorStop(1, '#88bbdd');
+       } else {
+         gradient = ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.h);
+         gradient.addColorStop(0, '#666');
+         gradient.addColorStop(0.3, '#444');
+         gradient.addColorStop(1, '#222');
+       }
+      
+       ctx.fillStyle = gradient;
+       ctx.fillRect(this.x, this.y, this.w, this.h);
+      
+       // Top highlight
+       ctx.fillStyle = this.type === 'ice' ?
+         'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.3)';
+       ctx.fillRect(this.x, this.y, this.w, 4);
+      
+       // Ice sparkles
+       if(this.type === 'ice') {
+         this.sparkles.forEach(s => {
+           const alpha = (Math.sin(s.phase) + 1) * 0.3;
+           ctx.globalAlpha = alpha;
+           ctx.fillStyle = '#fff';
+           ctx.beginPath();
+           ctx.arc(this.x + s.x, this.y + s.y, 2, 0, Math.PI * 2);
+           ctx.fill();
+         });
+         ctx.globalAlpha = 1;
+       }
+      
+       // Side shadows
+       ctx.fillStyle = 'rgba(0,0,0,0.2)';
+       ctx.fillRect(this.x + this.w - 3, this.y, 3, this.h);
+     }
+   }
+
+
+   class Spike {
+     constructor(x,y,size=28){
+       this.x=x;this.y=y;this.size=size;
+       this.wobble = Math.random() * Math.PI * 2;
+       this.pulse = 0;
+     }
+    
+     update() {
+       this.wobble += 0.03;
+       this.pulse += 0.1;
+     }
+    
+     draw(){
+       ctx.save();
+       ctx.translate(this.x + this.size/2, this.y);
+      
+       const wobbleAmount = Math.sin(this.wobble) * 0.05;
+       const pulseAmount = (Math.sin(this.pulse) + 1) * 0.1;
+      
+       ctx.rotate(wobbleAmount);
+       ctx.scale(1 + pulseAmount, 1 + pulseAmount);
+      
+       // Shadow
+       ctx.fillStyle = 'rgba(0,0,0,0.3)';
+       ctx.beginPath();
+       ctx.moveTo(-this.size/2 + 2, 2);
+       ctx.lineTo(2, -this.size + 2);
+       ctx.lineTo(this.size/2 + 2, 2);
+       ctx.closePath();
+       ctx.fill();
+      
+       // Main spike
+       const gradient = ctx.createLinearGradient(-this.size/2, 0, this.size/2, -this.size);
+       gradient.addColorStop(0, '#ff2222');
+       gradient.addColorStop(0.5, '#ff4444');
+       gradient.addColorStop(1, '#ff6666');
+       ctx.fillStyle = gradient;
+      
+       ctx.beginPath();
+       ctx.moveTo(-this.size/2, 0);
+       ctx.lineTo(0, -this.size);
+       ctx.lineTo(this.size/2, 0);
+       ctx.closePath();
+       ctx.fill();
+      
+       // Highlight
+       ctx.fillStyle = 'rgba(255,255,255,0.4)';
+       ctx.beginPath();
+       ctx.moveTo(-this.size/2 + 4, 0);
+       ctx.lineTo(-2, -this.size + 8);
+       ctx.lineTo(2, -this.size + 8);
+       ctx.lineTo(this.size/2 - 4, 0);
+       ctx.closePath();
+       ctx.fill();
+      
+       // Glow effect
+       ctx.shadowColor = '#ff4444';
+       ctx.shadowBlur = 15;
+       ctx.strokeStyle = 'rgba(255,68,68,0.5)';
+       ctx.lineWidth = 2;
+       ctx.stroke();
+       ctx.shadowBlur = 0;
+      
+       ctx.restore();
+     }
+    
+     collide(px,py,pw,ph){
+       return (px < this.x+this.size && px+pw > this.x && py+ph > this.y-this.size && py < this.y);
+     }
+   }
+
+
+   class Enemy {
+     constructor(x,y,range,speed=1.5){
+       this.x=x;this.y=y;this.w=32;this.h=32;
+       this.start=x;this.range=range;this.dir=1;this.speed=speed;
+       this.bounce = 0;
+       this.alertLevel = 0;
+     }
+    
+     update(){
+       this.x += this.dir * this.speed;
+       this.bounce += 0.15;
+      
+       // Check if player is nearby
+       const playerDist = Math.abs(player.x - this.x);
+       if(playerDist < 100) {
+         this.alertLevel = Math.min(this.alertLevel + 0.1, 1);
+         this.speed = Math.min(this.speed * 1.01, 3);
+       } else {
+         this.alertLevel = Math.max(this.alertLevel - 0.05, 0);
+       }
+      
+       if(this.x > this.start + this.range || this.x < this.start) {
+         this.dir *= -1;
+         // Direction change particles
+         for(let i = 0; i < 5; i++) {
+           particles.push(new Particle(
+             this.x + this.w/2,
+             this.y + this.h,
+             '#ffaa44',
+             25,
+             2
+           ));
+         }
+       }
+     }
+    
+     draw(){
+       const bounceY = Math.sin(this.bounce) * 3;
+       const alertPulse = this.alertLevel * Math.sin(Date.now() * 0.01) * 2;
+      
+       ctx.save();
+       ctx.translate(this.x + this.w/2, this.y + this.h/2 + bounceY);
+       ctx.scale(this.dir, 1);
+      
+       // Alert glow
+       if(this.alertLevel > 0) {
+         ctx.shadowColor = '#ff4444';
+         ctx.shadowBlur = 20 * this.alertLevel;
+       }
+      
+       // Body
+       const gradient = ctx.createLinearGradient(0, -this.h/2, 0, this.h/2);
+       gradient.addColorStop(0, '#ffcc44');
+       gradient.addColorStop(0.5, '#ffaa44');
+       gradient.addColorStop(1, '#dd7722');
+       ctx.fillStyle = gradient;
+       ctx.fillRect(-this.w/2, -this.h/2 + alertPulse, this.w, this.h);
+      
+       // Eyes
+       ctx.fillStyle = this.alertLevel > 0.5 ? '#ff0000' : '#fff';
+       ctx.fillRect(-10, -8, 8, 8);
+       ctx.fillRect(2, -8, 8, 8);
+       ctx.fillStyle = '#000';
+       const pupilX = this.alertLevel > 0.5 ? 2 : 0;
+       ctx.fillRect(-8 + pupilX, -6, 3, 3);
+       ctx.fillRect(4 + pupilX, -6, 3, 3);
+      
+       // Mouth (angry when alert)
+       ctx.strokeStyle = '#000';
+       ctx.lineWidth = 2;
+       ctx.beginPath();
+       if(this.alertLevel > 0.5) {
+         ctx.arc(0, 5, 8, 0.3, Math.PI - 0.3);
+       } else {
+         ctx.arc(0, 8, 6, 0, Math.PI);
+       }
+       ctx.stroke();
+      
+       ctx.shadowBlur = 0;
+       ctx.restore();
+     }
+    
+     collide(px,py,pw,ph){
+       return(px < this.x+this.w && px+pw > this.x && py < this.y+this.h && py+ph > this.y);
+     }
+   }
+
+
+   class Collectible {
+     constructor(x, y) {
+       this.x = x;
+       this.y = y;
+       this.size = 20;
+       this.collected = false;
+       this.spin = 0;
+       this.float = 0;
+       this.magnetRange = 60;
+     }
+    
+     update() {
+       this.spin += 0.2;
+       this.float += 0.12;
+      
+       // Magnetic attraction to player
+       const dx = player.x + player.w/2 - (this.x + this.size/2);
+       const dy = player.y + player.h/2 - (this.y + this.size/2);
+       const dist = Math.sqrt(dx*dx + dy*dy);
+      
+       if(dist < this.magnetRange && !this.collected) {
+         const force = 0.3;
+         this.x += (dx / dist) * force;
+         this.y += (dy / dist) * force;
+       }
+     }
+    
+     draw() {
+       if(this.collected) return;
+      
+       const floatY = Math.sin(this.float) * 4;
+       ctx.save();
+       ctx.translate(this.x + this.size/2, this.y + this.size/2 + floatY);
+       ctx.rotate(this.spin);
+      
+       // Outer glow
+       ctx.shadowColor = '#ffdd44';
+       ctx.shadowBlur = 20;
+      
+       // Coin body
+       const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size/2);
+       gradient.addColorStop(0, '#ffed4e');
+       gradient.addColorStop(0.7, '#ffdd44');
+       gradient.addColorStop(1, '#cc9900');
+      
+       ctx.fillStyle = gradient;
+       ctx.beginPath();
+       ctx.arc(0, 0, this.size/2, 0, Math.PI * 2);
+       ctx.fill();
+      
+       // Inner shine
+       ctx.fillStyle = 'rgba(255,255,255,0.8)';
+       ctx.beginPath();
+       ctx.arc(-this.size/6, -this.size/6, this.size/4, 0, Math.PI * 2);
+       ctx.fill();
+      
+       // Dollar sign
+       ctx.shadowBlur = 0;
+       ctx.fillStyle = '#aa6600';
+       ctx.font = `${this.size}px bold sans-serif`;
+       ctx.textAlign = 'center';
+       ctx.textBaseline = 'middle';
+       ctx.fillText('$', 0, 0);
+      
+       ctx.restore();
+     }
+    
+     collide(px, py, pw, ph) {
+       return !this.collected && px < this.x + this.size && px + pw > this.x &&
+              py < this.y + this.size && py + ph > this.y;
+     }
+   }
+
+
+   let player = new Player();
+   let platforms = [];
+   let spikes = [];
+   let enemies = [];
+   let collectibles = [];
+   let goal;
+   let currentLevel = 0;
+
+
+   const levels = [
+     {
+       name: "🌟 Welcome to Adventure",
+       layout: () => {
+         platforms = [
+           new Platform(0, 650, 500, 50),
+           new Platform(600, 550, 200, 30),
+           new Platform(900, 450, 200, 30),
+           new Platform(1200, 550, 300, 30),
+           new Platform(1600, 450, 200, 30),
+           new Platform(1900, 600, 400, 50)
+         ];
+         spikes = [
+           new Spike(520, 650), new Spike(560, 650),
+           new Spike(1120, 550), new Spike(1520, 450)
+         ];
+         enemies = [
+           new Enemy(650, 522, 100, 1.0),
+           new Enemy(1250, 522, 200, 1.0)
+         ];
+         collectibles = [
+           new Collectible(700, 510),
+           new Collectible(1000, 410),
+           new Collectible(1400, 510),
+           new Collectible(1700, 410)
+         ];
+         goal = {x: 2200, y: 550, w: 40, h: 50};
+       }
+     },
+     {
+       name: "⚡ Spike Valley Challenge",
+       layout: () => {
+         platforms = [
+           new Platform(0, 650, 400, 50),
+           new Platform(500, 550, 200, 30),
+           new Platform(800, 450, 200, 30),
+           new Platform(1100, 550, 200, 30),
+           new Platform(1400, 450, 250, 30),
+           new Platform(1750, 600, 300, 50)
+         ];
+         spikes = [
+           new Spike(420, 650), new Spike(460, 650),
+           new Spike(720, 550), new Spike(1020, 450),
+           new Spike(1320, 550), new Spike(1670, 450)
+         ];
+         enemies = [
+           new Enemy(550, 522, 150, 1.0),
+           new Enemy(1150, 522, 150, 1.0)
+         ];
+         collectibles = [
+           new Collectible(600, 510),
+           new Collectible(900, 410),
+           new Collectible(1200, 510),
+           new Collectible(1500, 410)
+         ];
+         goal = {x: 1950, y: 550, w: 40, h: 50};
+       }
+     },
+     {
+       name: "👹 Enemy Territory",
+       layout: () => {
+         platforms = [
+           new Platform(0, 650, 400, 50),
+           new Platform(500, 500, 250, 30),
+           new Platform(850, 400, 200, 30),
+           new Platform(1150, 500, 250, 30),
+           new Platform(1500, 600, 200, 30),
+           new Platform(1800, 400, 300, 30),
+           new Platform(2200, 550, 400, 50)
+         ];
+         spikes = [
+           new Spike(420, 650), new Spike(770, 500),
+           new Spike(1070, 400), new Spike(1420, 500),
+           new Spike(1720, 600), new Spike(2120, 400)
+         ];
+         enemies = [
+           new Enemy(550, 472, 200, 1.2),
+           new Enemy(900, 372, 150, 1.0),
+           new Enemy(1200, 472, 200, 1.1),
+           new Enemy(1850, 372, 250, 1.3)
+         ];
+         collectibles = [
+           new Collectible(650, 460),
+           new Collectible(950, 360),
+           new Collectible(1300, 460),
+           new Collectible(1950, 360),
+           new Collectible(2400, 510)
+         ];
+         goal = {x: 2500, y: 500, w: 40, h: 50};
+       }
+     },
+     {
+       name: "❄️ Ice Cave Expedition",
+       layout: () => {
+         platforms = [
+           new Platform(0, 650, 400, 50),
+           new Platform(500, 500, 200, 30, 'ice'),
+           new Platform(800, 400, 200, 30, 'ice'),
+           new Platform(1100, 550, 250, 30, 'ice'),
+           new Platform(1450, 350, 200, 30, 'ice'),
+           new Platform(1750, 500, 300, 30, 'ice'),
+           new Platform(2150, 400, 400, 50)
+         ];
+         spikes = [
+           new Spike(420, 650), new Spike(720, 500),
+           new Spike(1020, 400), new Spike(1370, 550),
+           new Spike(1670, 350), new Spike(2070, 500)
+         ];
+         enemies = [
+           new Enemy(550, 472, 150, 0.8),
+           new Enemy(1150, 522, 200, 0.7),
+           new Enemy(1800, 472, 250, 0.9)
+         ];
+         collectibles = [
+           new Collectible(600, 460),
+           new Collectible(900, 360),
+           new Collectible(1250, 510),
+           new Collectible(1550, 310),
+           new Collectible(1950, 460)
+         ];
+         goal = {x: 2450, y: 350, w: 40, h: 50};
+       }
+     },
+     {
+       name: "🌉 The Great Crossing",
+       layout: () => {
+         platforms = [
+           new Platform(0, 650, 300, 50),
+           new Platform(400, 550, 200, 30),
+           new Platform(700, 450, 150, 30),
+           new Platform(950, 550, 200, 30),
+           new Platform(1250, 400, 200, 30),
+           new Platform(1550, 550, 200, 30),
+           new Platform(1850, 350, 250, 30),
+           new Platform(2200, 500, 200, 30),
+           new Platform(2500, 600, 300, 50)
+         ];
+         spikes = [
+           new Spike(320, 650), new Spike(620, 550),
+           new Spike(870, 450), new Spike(1170, 550),
+           new Spike(1470, 400), new Spike(1770, 550),
+           new Spike(2120, 350), new Spike(2420, 500)
+         ];
+         enemies = [
+           new Enemy(450, 522, 150, 1.0),
+           new Enemy(750, 422, 100, 1.2),
+           new Enemy(1000, 522, 150, 1.1),
+           new Enemy(1600, 522, 150, 1.0),
+           new Enemy(2250, 472, 150, 1.3)
+         ];
+         collectibles = [
+           new Collectible(500, 510),
+           new Collectible(775, 410),
+           new Collectible(1350, 360),
+           new Collectible(1950, 310),
+           new Collectible(2300, 460)
+         ];
+         goal = {x: 2700, y: 550, w: 40, h: 50};
+       }
+     },
+     {
+       name: "🔥 Danger Zone Marathon",
+       layout: () => {
+         platforms = [
+           new Platform(0, 650, 300, 50),
+           new Platform(400, 550, 150, 30),
+           new Platform(650, 450, 200, 30),
+           new Platform(950, 550, 150, 30),
+           new Platform(1200, 400, 200, 30),
+           new Platform(1500, 550, 200, 30),
+           new Platform(1800, 350, 200, 30),
+           new Platform(2100, 500, 150, 30),
+           new Platform(2350, 600, 200, 30),
+           new Platform(2650, 450, 200, 30),
+           new Platform(2950, 550, 300, 50)
+         ];
+         spikes = [
+           new Spike(320, 650), new Spike(570, 550),
+           new Spike(870, 450), new Spike(1120, 550),
+           new Spike(1420, 400), new Spike(1720, 550),
+           new Spike(2020, 350), new Spike(2270, 500),
+           new Spike(2570, 600), new Spike(2870, 450)
+         ];
+         enemies = [
+           new Enemy(450, 522, 100, 1.2),
+           new Enemy(700, 422, 150, 1.1),
+           new Enemy(1000, 522, 100, 1.0),
+           new Enemy(1250, 372, 150, 1.3),
+           new Enemy(1550, 522, 150, 1.0),
+           new Enemy(2150, 472, 100, 1.4),
+           new Enemy(2700, 422, 150, 1.2)
+         ];
+         collectibles = [
+           new Collectible(475, 510),
+           new Collectible(750, 410),
+           new Collectible(1325, 360),
+           new Collectible(1875, 310),
+           new Collectible(2175, 460),
+           new Collectible(2750, 410)
+         ];
+         goal = {x: 3150, y: 500, w: 40, h: 50};
+       }
+     },
+     {
+       name: "🌲 Spike Forest Gauntlet",
+       layout: () => {
+         platforms = [
+           new Platform(0, 650, 350, 50),
+           new Platform(450, 550, 200, 30),
+           new Platform(750, 450, 150, 30),
+           new Platform(1000, 550, 200, 30),
+           new Platform(1300, 400, 200, 30),
+           new Platform(1600, 550, 200, 30),
+           new Platform(1900, 350, 250, 30),
+           new Platform(2250, 500, 200, 30),
+           new Platform(2550, 600, 200, 30),
+           new Platform(2850, 450, 300, 50)
+         ];
+         spikes = [
+           new Spike(370, 650), new Spike(410, 650),
+           new Spike(670, 550), new Spike(920, 450),
+           new Spike(1220, 550), new Spike(1520, 400),
+           new Spike(1820, 550), new Spike(2170, 350),
+           new Spike(2470, 500), new Spike(2770, 600)
+         ];
+         enemies = [
+           new Enemy(500, 522, 150, 1.1),
+           new Enemy(800, 422, 100, 1.0),
+           new Enemy(1050, 522, 150, 1.2),
+           new Enemy(1650, 522, 150, 1.1),
+           new Enemy(2300, 472, 150, 1.3)
+         ];
+         collectibles = [
+           new Collectible(550, 510),
+           new Collectible(825, 410),
+           new Collectible(1400, 360),
+           new Collectible(2000, 310),
+           new Collectible(2350, 460)
+         ];
+         goal = {x: 3050, y: 400, w: 40, h: 50};
+       }
+     },
+{
+       name: "⚡ The Moving Menace",
+       layout: () => {
+         platforms = [
+           new Platform(0, 650, 300, 50),
+           new Platform(400, 520, 200, 30),
+           new Platform(700, 420, 150, 30),
+           new Platform(950, 550, 200, 30),
+           new Platform(1250, 450, 200, 30),
+           new Platform(1550, 520, 200, 30),
+           new Platform(1850, 580, 150, 30),
+           new Platform(2100, 420, 250, 30),
+           new Platform(2450, 480, 200, 30),
+           new Platform(2750, 550, 300, 50)
+         ];
+         spikes = [
+           new Spike(300, 650), new Spike(600, 520),
+           new Spike(850, 420), new Spike(1150, 550),
+           new Spike(1450, 450), new Spike(1750, 520),
+           new Spike(2000, 580), new Spike(2350, 420),
+           new Spike(2650, 480)
+         ];
+         enemies = [
+           new Enemy(450, 492, 150, 1.5),
+           new Enemy(750, 392, 100, 1.4),
+           new Enemy(1000, 522, 150, 1.6),
+           new Enemy(1300, 422, 150, 1.5),
+           new Enemy(1600, 492, 150, 1.3),
+           new Enemy(2500, 452, 150, 1.7)
+         ];
+         collectibles = [
+           new Collectible(500, 480),
+           new Collectible(1375, 410),
+           new Collectible(2200, 380),
+           new Collectible(2550, 440)
+         ];
+         goal = {x: 2950, y: 500, w: 40, h: 50};
+       }
+     },
+     {
+       name: "💀 The Ultimate Trial",
+       layout: () => {
+         platforms = [
+           new Platform(0, 650, 250, 50),
+           new Platform(350, 550, 150, 30, 'ice'),
+           new Platform(600, 450, 200, 30),
+           new Platform(900, 350, 150, 30, 'ice'),
+           new Platform(1150, 500, 200, 30),
+           new Platform(1450, 250, 200, 30),
+           new Platform(1750, 400, 150, 30, 'ice'),
+           new Platform(2000, 550, 200, 30),
+           new Platform(2300, 300, 250, 30),
+           new Platform(2650, 450, 150, 30, 'ice'),
+           new Platform(2900, 600, 200, 30),
+           new Platform(3200, 350, 300, 50)
+         ];
+         spikes = [
+           new Spike(270, 650), new Spike(520, 550),
+           new Spike(820, 450), new Spike(1070, 350),
+           new Spike(1370, 500), new Spike(1670, 250),
+           new Spike(1920, 400), new Spike(2220, 550),
+           new Spike(2570, 300), new Spike(2820, 450),
+           new Spike(3120, 600)
+         ];
+         enemies = [
+           new Enemy(400, 522, 100, 1.3),
+           new Enemy(650, 422, 150, 1.5),
+           new Enemy(1200, 472, 150, 1.4),
+           new Enemy(1500, 222, 150, 1.2),
+           new Enemy(2050, 522, 150, 1.6),
+           new Enemy(2700, 422, 100, 1.5)
+         ];
+         collectibles = [
+           new Collectible(425, 510),
+           new Collectible(975, 310),
+           new Collectible(1575, 210),
+           new Collectible(2125, 510),
+           new Collectible(2450, 260),
+           new Collectible(2975, 560)
+         ];
+         goal = {x: 3400, y: 300, w: 40, h: 50};
+       }
+     },
+     {
+       name: "🎉 Victory Celebration!",
+       layout: () => {
+         platforms = [new Platform(200, 550, 800, 50)];
+         enemies = [];
+         spikes = [];
+         collectibles = [];
+         goal = null;
+         // Victory particles
+         for(let i = 0; i < 100; i++) {
+           particles.push(new Particle(
+             Math.random() * 800 + 200,
+             Math.random() * 400 + 100,
+             ['#4af', '#ff4', '#4f4', '#f4f'][Math.floor(Math.random() * 4)],
+             120,
+             4
+           ));
+         }
+       }
+     }
+   ];
+
+
+   function loadLevel(){
+     player = new Player();
+     particles = particles.filter(p => p.life > 60); // Keep victory particles
+     levels[currentLevel].layout();
+     levelName.textContent = levels[currentLevel].name;
+     levelInfo.textContent = `Level ${currentLevel + 1}/${levels.length}`;
+     coinCount.textContent = coins;
+     deathCount.textContent = deaths;
+   }
+
+
+   function resetLevel(){
+     loadLevel();
+   }
+
+
+   function update(){
+     if(paused) return;
+    
+     player.update();
+
+
+     // Platform collision and physics
+     platforms.forEach(p => {
+       p.update();
+       if(player.x < p.x + p.w && player.x + player.w > p.x &&
+          player.y < p.y + p.h && player.y + player.h > p.y){
+         if(player.velY > 0) {
+           player.y = p.y - player.h;
+           player.velY = 0;
+           player.jumping = false;
+           player.onGround = true;
+         }
+       }
+     });
+
+
+     // Apply ice friction
+     let onIcePlatform = false;
+     platforms.forEach(p => {
+       if(player.onGround && player.x < p.x + p.w && player.x + player.w > p.x &&
+          Math.abs((player.y + player.h) - p.y) < 5) {
+         if(p.type === 'ice') {
+           onIcePlatform = true;
+         }
+       }
+     });
+    
+     if(onIcePlatform) {
+       player.velX *= iceFriction;
+     }
+
+
+     // Spike collision
+     spikes.forEach(s => {
+       s.update();
+       if(s.collide(player.x, player.y, player.w, player.h)){
+         player.die();
+       }
+     });
+
+
+     // Enemy collision
+     enemies.forEach(e => {
+       e.update();
+       if(e.collide(player.x, player.y, player.w, player.h)){
+         player.die();
+       }
+     });
+
+
+     // Collectible collision
+     collectibles.forEach(c => {
+       c.update();
+       if(c.collide(player.x, player.y, player.w, player.h)){
+         if(!c.collected) {
+           c.collected = true;
+           coins++;
+           coinCount.textContent = coins;
+           playSound('coin');
+           // Enhanced collect particles
+           for(let i = 0; i < 12; i++) {
+             particles.push(new Particle(
+               c.x + c.size/2,
+               c.y + c.size/2,
+               '#ffdd44',
+               40,
+               3
+             ));
+           }
+         }
+       }
+     });
+
+
+     // Goal collision
+     if(goal && player.x + player.w > goal.x && player.x < goal.x + goal.w){
+       if(player.y + player.h > goal.y && player.y < goal.y + goal.h){
+         currentLevel++;
+         if(currentLevel >= levels.length) {
+           currentLevel = 0;
+           deaths = 0;
+           coins = 0;
+         }
+         // Level complete particles
+         for(let i = 0; i < 30; i++) {
+           particles.push(new Particle(
+             goal.x + goal.w/2,
+             goal.y + goal.h/2,
+             ['#44ff44', '#66ff66', '#88ff88'][Math.floor(Math.random() * 3)],
+             60,
+             4
+           ));
+         }
+         loadLevel();
+       }
+     }
+
+
+     // Update particles
+     particles = particles.filter(p => {
+       p.update();
+       return p.life > 0;
+     });
+
+
+     // Camera shake
+     if(cameraShake > 0) cameraShake--;
+
+
+     // Reset key
+     if(keys["r"]) {
+       resetLevel();
+     }
+    
+     // Pause key, DOESN'T WORK, disabled
+//     if(keys["p"]) {
+  //     paused = !paused;
+    //   keys["p"] = false;
+ //    }
+   }
+
+
+   function drawBackground() {
+     // Animated sky gradient
+     const time = Date.now() * 0.001;
+     const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    
+     const r1 = Math.sin(time * 0.5) * 30 + 135;
+     const g1 = Math.sin(time * 0.7) * 20 + 206;
+     const b1 = Math.sin(time * 0.3) * 25 + 235;
+    
+     gradient.addColorStop(0, `rgb(${r1},${g1},${b1})`);
+     gradient.addColorStop(0.7, '#98D8E8');
+     gradient.addColorStop(1, '#B0E0E6');
+     ctx.fillStyle = gradient;
+     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+
+     // Enhanced clouds with depth
+     const layers = [
+       {color: 'rgba(255, 255, 255, 0.9)', speed: 0.3, y: 60},
+       {color: 'rgba(255, 255, 255, 0.6)', speed: 0.5, y: 120},
+       {color: 'rgba(255, 255, 255, 0.3)', speed: 0.8, y: 180}
+     ];
+    
+     layers.forEach((layer, index) => {
+       ctx.fillStyle = layer.color;
+       for(let i = 0; i < 6; i++) {
+         const x = ((i * 220 + time * layer.speed * 10) % (canvas.width + 150)) - 100;
+         const y = layer.y + Math.sin(time + i) * 10;
+         const scale = 0.8 + index * 0.2;
+        
+         ctx.save();
+         ctx.scale(scale, scale);
+         ctx.beginPath();
+         ctx.arc(x/scale, y/scale, 25, 0, Math.PI * 2);
+         ctx.arc(x/scale + 20, y/scale, 30, 0, Math.PI * 2);
+         ctx.arc(x/scale + 40, y/scale, 25, 0, Math.PI * 2);
+         ctx.fill();
+         ctx.restore();
+       }
+     });
+   }
+
+
+   function draw(){
+     drawBackground();
+    
+     ctx.save();
+    
+     // Camera with shake
+     let camX = -player.x + canvas.width/2;
+     let camY = -player.y + canvas.height/2 + 100;
+    
+     if(cameraShake > 0) {
+       camX += (Math.random() - 0.5) * cameraShake * 2;
+       camY += (Math.random() - 0.5) * cameraShake * 2;
+     }
+    
+     // Camera bounds
+     const maxX = Math.max(...platforms.map(p => p.x + p.w)) || canvas.width;
+     if(camX > 0) camX = 0;
+     if(camX < -(maxX - canvas.width)) camX = -(maxX - canvas.width);
+     if(camY > -200) camY = -200;
+     if(camY < -500) camY = -500;
+    
+     ctx.translate(camX, camY);
+    
+     // Draw game objects with enhanced visuals
+     platforms.forEach(p => p.draw());
+     spikes.forEach(s => s.draw());
+     enemies.forEach(e => e.draw());
+     collectibles.forEach(c => c.draw());
+    
+     // Enhanced goal with animation
+     if(goal){
+       const pulseTime = Date.now() * 0.005;
+       const pulse = Math.sin(pulseTime) * 0.1 + 0.9;
+      
+       ctx.save();
+       ctx.translate(goal.x + goal.w/2, goal.y + goal.h/2);
+       ctx.scale(pulse, pulse);
+      
+       // Goal glow layers
+       ctx.shadowColor = '#44ff44';
+       ctx.shadowBlur = 30;
+      
+       const gradient = ctx.createLinearGradient(-goal.w/2, -goal.h/2, goal.w/2, goal.h/2);
+       gradient.addColorStop(0, '#44ff44');
+       gradient.addColorStop(0.5, '#66ff66');
+       gradient.addColorStop(1, '#22cc22');
+       ctx.fillStyle = gradient;
+       ctx.fillRect(-goal.w/2, -goal.h/2, goal.w, goal.h);
+      
+       // Goal shine
+       ctx.fillStyle = 'rgba(255,255,255,0.6)';
+       ctx.fillRect(-goal.w/2 + 3, -goal.h/2 + 3, goal.w/2, goal.h/3);
+      
+       ctx.shadowBlur = 0;
+       ctx.restore();
+     }
+    
+     // Draw particles
+     particles.forEach(p => p.draw());
+    
+     player.draw();
+     ctx.restore();
+    
+     // Pause overlay
+     if(paused) {
+       ctx.fillStyle = 'rgba(0,0,0,0.5)';
+       ctx.fillRect(0, 0, canvas.width, canvas.height);
+       ctx.fillStyle = '#fff';
+       ctx.font = '48px Orbitron';
+       ctx.textAlign = 'center';
+       ctx.fillText('PAUSED', canvas.width/2, canvas.height/2);
+       ctx.font = '24px Orbitron';
+       ctx.fillText('Press P to continue', canvas.width/2, canvas.height/2 + 60);
+     }
+   }
+
+
+   function calculateFPS(currentTime) {
+     const deltaTime = currentTime - lastTime;
+     fps = Math.round(1000 / deltaTime);
+     lastTime = currentTime;
+     fpsDisplay.textContent = `FPS: ${fps}`;
+   }
+
+
+   function loop(currentTime){
+     calculateFPS(currentTime);
+     update();
+     draw();
+     requestAnimationFrame(loop);
+   }
+
+
+   document.addEventListener("keydown", e => {
+     keys[e.key] = true;
+     keys[e.key.toLowerCase()] = true;
+    
+     if((e.key === "ArrowUp" || e.key === " " || e.key.toLowerCase() === "w") &&
+        player.onGround && !player.jumping && !paused){
+       player.velY = jumpPower;
+       player.jumping = true;
+       player.onGround = false;
+       playSound('jump');
+      
+       // Enhanced jump particles
+       for(let i = 0; i < 8; i++) {
+         particles.push(new Particle(
+           player.x + player.w/2 + (Math.random() - 0.5) * player.w,
+           player.y + player.h,
+           '#4af',
+           20,
+           2
+         ));
+       }
+     }
+    
+     e.preventDefault();
+   });
+  
+   document.addEventListener("keyup", e => {
+     keys[e.key] = false;
+     keys[e.key.toLowerCase()] = false;
+   });
+
+
+   // Disable context menu
+   canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+
+   loadLevel();
+   requestAnimationFrame(loop);
+ </script>
+</body>
+</html>
