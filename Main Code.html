@@ -1655,11 +1655,9 @@ The Laugh Team
             
             isLoading = false;
         };
-
-        // === GAME LAUNCHING ===
+// === GAME LAUNCHING ===
 // Opens an about:blank window with a Start screen.
-// After clicking Start, the game HTML is injected into an <iframe>
-// WITHOUT ever embedding the game's HTML inside a <script>.
+// After clicking Start, the game HTML is injected into an <iframe>.
 const playGame = (gameKey) => {
   const game = games.find(g => g.key === gameKey);
   if (!game || !game.html) {
@@ -1674,57 +1672,92 @@ const playGame = (gameKey) => {
     return;
   }
 
-  // Minimal shell: no scripts that reference game.html
+  // Minimal shell (no inline <script> to avoid parsing issues)
   const safeTitle = String(game.title || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   const safeDesc  = String(game.desc  || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  const shell = [
-    '<!DOCTYPE html><html><head><meta charset="utf-8"><title>', safeTitle, '</title>',
-    '<style>',
-    ':root{color-scheme:dark;}html,body{height:100%;margin:0}',
-    'body{background:#000;color:#fff;font-family:Arial,Helvetica,sans-serif;',
-    'display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}',
-    '#intro{max-width:720px;padding:1.25rem}',
-    '#intro h2{margin:0 0 .5rem 0;font-size:1.5rem}',
-    '#intro .desc{color:#cfcfcf;line-height:1.4}',
-    '#startBtn{padding:.8rem 1.5rem;font-size:1rem;margin-top:1rem;cursor:pointer;border-radius:10px;',
-    'background:#72e0d1;color:#181c24;border:none;font-weight:700}',
-    '#startBtn:hover{background:#5bc5b8}',
-    '#frame{display:none;width:100vw;height:100vh;border:0}',
-    '</style></head><body>',
-    '<div id="intro"><h2>', safeTitle, '</h2><div class="desc">', safeDesc, '</div>',
-    '<button id="startBtn">Start Game</button></div>',
-    '<iframe id="frame" allowfullscreen></iframe>',
-    '</body></html>'
-  ].join('');
+  const shell = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <title>${safeTitle}</title>
+      <style>
+        :root{color-scheme:dark;}
+        html,body{height:100%;margin:0;}
+        body{
+          background:#000;color:#fff;font-family:Arial,Helvetica,sans-serif;
+          display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+        }
+        #intro{max-width:720px;padding:1.25rem;}
+        #intro h2{margin:0 0 .5rem 0;font-size:1.5rem;}
+        #intro .desc{color:#cfcfcf;line-height:1.4;}
+        #startBtn{
+          padding:.8rem 1.5rem;font-size:1rem;margin-top:1rem;cursor:pointer;border-radius:10px;
+          background:#72e0d1;color:#181c24;border:none;font-weight:700;
+        }
+        #startBtn:hover{background:#5bc5b8;}
+        #frame{display:none;width:100vw;height:100vh;border:0;}
+        #adContainer{margin-top:1rem;}
+      </style>
+    </head>
+    <body>
+      <div id="intro">
+        <h2>${safeTitle}</h2>
+        <div class="desc">${safeDesc}</div>
+        <div id="adContainer"></div>
+        <button id="startBtn">Start Game</button>
+      </div>
+      <iframe id="frame" allowfullscreen></iframe>
+    </body>
+    </html>
+  `;
 
+  // Write the initial shell
   w.document.open();
   w.document.write(shell);
   w.document.close();
 
-  // Attach events from the opener (no inline <script> in the child page)
+  // Attach events from the opener
   const attach = () => {
     const doc = w.document;
     const btn = doc.getElementById('startBtn');
     const intro = doc.getElementById('intro');
     const frame = doc.getElementById('frame');
-    if (!btn || !frame) return;
+    const adContainer = doc.getElementById('adContainer');
+    if (!btn || !frame || !adContainer) return;
 
+    // Inject Adsterra script after shell load
+    const adScript1 = doc.createElement('script');
+    adScript1.innerHTML = `
+      atOptions = {
+        'key' : '6334037ab39c7e6c9f6cb15559294cca',
+        'format' : 'iframe',
+        'height' : 60,
+        'width' : 468,
+        'params' : {}
+      };
+    `;
+    const adScript2 = doc.createElement('script');
+    adScript2.src = "//www.highperformanceformat.com/6334037ab39c7e6c9f6cb15559294cca/invoke.js";
+
+    adContainer.appendChild(adScript1);
+    adContainer.appendChild(adScript2);
+
+    // Start button logic
     btn.addEventListener('click', () => {
-      // Hide intro, show game frame
+      // Hide intro (with ad) and show the game
       if (intro) intro.style.display = 'none';
       frame.style.display = 'block';
 
-      // Load the game HTML without putting it inside a <script>
+      // Load the game HTML safely
       if ('srcdoc' in frame) {
-        frame.srcdoc = game.html; // safest path—no script parsing issues
+        frame.srcdoc = game.html;
       } else {
-        // Fallback for very old browsers: blob URL
         const blob = new Blob([game.html], { type: 'text/html' });
         const url = URL.createObjectURL(blob);
         frame.src = url;
       }
 
-      // Count a play (from the opener)
       try { updateGameStats(gameKey, 'play'); } catch (_) {}
     }, { once: true });
   };
@@ -1735,6 +1768,7 @@ const playGame = (gameKey) => {
     w.addEventListener('load', attach, { once: true });
   }
 };
+
 
 
 
