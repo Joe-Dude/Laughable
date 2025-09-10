@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML IDE</title>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    #toolbar {
+      background: #f0f0f0;
+      padding: 5px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    #container {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+    #editor {
+      width: 50%;
+      height: 100%;
+    }
+    #preview {
+      width: 50%;
+      height: 100%;
+      border: none;
+      background: white;
+    }
+    button {
+      padding: 5px 10px;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+</head>
+<body>
+  <div id="toolbar">
+    <button onclick="saveToLocal()">💾 Save</button>
+    <button onclick="loadFromLocal()">📂 Load</button>
+    <button onclick="downloadFile()">⬇️ Download</button>
+  </div>
+  <div id="container">
+    <div id="editor"></div>
+    <iframe id="preview"></iframe>
+  </div>
+
+
+  <script>
+    let editor;
+
+
+    // Monaco Editor setup
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }});
+    require(['vs/editor/editor.main'], function () {
+      editor = monaco.editor.create(document.getElementById('editor'), {
+        value: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Tutorial</title>
+</head>
+<body>
+<h1>Wow! We can't wait to see what you make!</h1>
+  <p>Maybe think about submitting whatever it is to Laughable?</p>
+</body>
+</html>`,
+        language: 'html',
+        theme: 'vs-dark',
+        automaticLayout: true
+      });
+
+
+      editor.onDidChangeModelContent(updatePreview);
+      updatePreview();
+    });
+
+
+    function updatePreview() {
+      const code = editor.getValue();
+      document.getElementById('preview').srcdoc = code;
+    }
+
+
+    function saveToLocal() {
+      localStorage.setItem('html-ide-code', editor.getValue());
+      alert("Code saved to local storage!");
+    }
+
+
+    function loadFromLocal() {
+      const code = localStorage.getItem('html-ide-code');
+      if (code) {
+        editor.setValue(code);
+        alert("Code loaded from local storage!");
+      } else {
+        alert("No saved code found.");
+      }
+    }
+
+
+    function downloadFile() {
+      const blob = new Blob([editor.getValue()], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'my_page.html';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
