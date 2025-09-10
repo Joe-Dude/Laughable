@@ -1102,17 +1102,15 @@ The Laugh Team
             Sorry, but we don't exept direct donations yet. If your really nice you can still donate in cash via email or the old Laughable. We've also been working on a add spam link, which will directly donate, with the click of a button!
             <br>
             <br>
-            <button onclick="window.open('https://Joe-Dude.github.io/Laughable/embedded_ad_iframe.html','_blank')">
-            Donate
-            </button>
+                <button onclick="donatebtn()" type="button">Donate with Ads</button>
             <br>
             <br>
-            Even one click means a lot! Laughable wouldn't be what it is without the support from the school gaming community!
+                Even one click means a lot! Laughable wouldn't be what it is without the support from the school gaming community!
             <br>
             <br>
             <br>
             <br>
-            P.S. Spamming is appricieted as well!
+                P.S. Spamming is appricieted as well!
         </section>
     </main>
 
@@ -2287,6 +2285,39 @@ const starwarsfour = () => {
     }
 };
 
+const donatebtn = () => {
+    const leaderboardHTML = `
+       <!DOCTYPE html>
+<html style="height:100%;width:100%;">
+<head>
+    <title>Ad Content</title>
+    <style>
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; }
+        iframe { width: 100vw; height: 100vh; border: none; display: block; }
+    </style>
+</head>
+<body>
+    <iframe src="https://Joe-Dude.github.io/Laughable/embedded_ad_iframe.html" allowfullscreen scrolling=”no”></iframe>
+</body>
+</html>
+    `;
+    
+    try {
+        const newWindow = window.open('about:blank', '_blank', 'width=900,height=700');
+        if (newWindow) {
+            newWindow.document.open();
+            newWindow.document.write(leaderboardHTML);
+            newWindow.document.close();
+            showNotification('Ad Opened', 'success');
+        } else {
+            showNotification('Ad failed to open, try allowing popups!', 'error');
+        }
+    } catch (error) {
+        console.error('Error opening leaderboard:', error);
+        showNotification('Error opening leaderboard. Please try again.', 'error');
+    }
+};
+        
 const develop = () => {
     const leaderboardHTML = `
        <!DOCTYPE html>
